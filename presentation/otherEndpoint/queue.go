@@ -1,0 +1,3 @@
+package otherendpoint
+
+func entry() {}
