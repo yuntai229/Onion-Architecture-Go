@@ -19,13 +19,15 @@ func NewUserController(userApp domain.UserApp) *UserController {
 func (user *UserController) Signup(ctx *gin.Context) {
 	var requestBody dto.SignupRequest
 
-	ctx.BindJSON(&requestBody)
-	user.userApp.Signup(requestBody)
+	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
+		newErr := domain.MissingFieldErr
+		res := domain.Response.ResWithFail(newErr)
+		ctx.JSON(newErr.HttpCode, res)
+		return
+	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"code":    "0000",
-		"message": 0,
-		"data":    gin.H{},
-	})
+	user.userApp.Signup(requestBody)
+	res := domain.Response.ResWithSucc(nil)
+	ctx.JSON(http.StatusOK, res)
 
 }
