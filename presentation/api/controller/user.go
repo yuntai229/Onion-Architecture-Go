@@ -26,7 +26,12 @@ func (user *UserController) Signup(ctx *gin.Context) {
 		return
 	}
 
-	user.userApp.Signup(requestBody)
+	if err := user.userApp.Signup(requestBody); err != nil {
+		newErr := *err
+		res := domain.Response.ResWithFail(newErr)
+		ctx.JSON(newErr.HttpCode, res)
+		return
+	}
 	res := domain.Response.ResWithSucc(nil)
 	ctx.JSON(http.StatusOK, res)
 
