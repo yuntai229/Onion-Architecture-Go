@@ -2,7 +2,7 @@ package presentation
 
 import (
 	domain "onion-architecrure-go/domain/entity"
-	"onion-architecrure-go/presentation/api/controller"
+	handler "onion-architecrure-go/presentation/api/handler"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,11 +10,11 @@ import (
 func InitRouter(userApp domain.UserApp) *gin.Engine {
 	router := gin.Default()
 
-	homeController := controller.NewHomeController()
-	userController := controller.NewUserController(userApp)
+	homeHandler := handler.NewHomeController()
+	userHandler := handler.NewUserController(userApp)
 
-	router.GET("/ping", homeController.Ping)
-	router.POST("/user/signup", userController.Signup)
+	router.GET("/ping", homeHandler.Ping)
+	router.POST("/user/signup", userHandler.Signup)
 
 	return router
 }
