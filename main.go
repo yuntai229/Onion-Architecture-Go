@@ -11,6 +11,7 @@ func main() {
 
 	userApp := app.NewUser()
 	userApp := app.NewUserApp()
+	db := cmd.InitDb()
 
 	server := &http.Server{
 		Addr:         ":8080",
