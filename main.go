@@ -10,6 +10,7 @@ import (
 func main() {
 
 	userApp := app.NewUser()
+	userApp := app.NewUserApp()
 
 	server := &http.Server{
 		Addr:         ":8080",

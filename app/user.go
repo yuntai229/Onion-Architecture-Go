@@ -7,7 +7,7 @@ import (
 
 type UserApp struct{}
 
-func NewUser() domain.UserApp {
+func NewUserApp() domain.UserApp {
 	return &UserApp{}
 }
 
