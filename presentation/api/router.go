@@ -10,8 +10,8 @@ import (
 func InitRouter(userApp domain.UserApp) *gin.Engine {
 	router := gin.Default()
 
-	homeHandler := handler.NewHomeController()
-	userHandler := handler.NewUserController(userApp)
+	homeHandler := handler.NewHomeHandler()
+	userHandler := handler.NewUserHandler(userApp)
 
 	router.GET("/ping", homeHandler.Ping)
 	router.POST("/user/signup", userHandler.Signup)

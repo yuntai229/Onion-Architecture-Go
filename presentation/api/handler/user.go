@@ -12,7 +12,7 @@ type UserHandler struct {
 	userApp domain.UserApp
 }
 
-func NewUserController(userApp domain.UserApp) *UserHandler {
+func NewUserHandler(userApp domain.UserApp) *UserHandler {
 	return &UserHandler{userApp}
 }
 

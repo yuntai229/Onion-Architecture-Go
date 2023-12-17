@@ -6,7 +6,7 @@ import (
 
 type homeHandler struct{}
 
-func NewHomeController() *homeHandler {
+func NewHomeHandler() *homeHandler {
 	return &homeHandler{}
 }
 
