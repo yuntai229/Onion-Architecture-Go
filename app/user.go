@@ -11,6 +11,6 @@ func NewUserApp() domain.UserApp {
 	return &UserApp{}
 }
 
-func (u *UserApp) Signup(requestBody dto.SignupRequest) *domain.ErrorMessage {
+func (app *UserApp) Signup(requestBody dto.SignupRequest) *domain.ErrorMessage {
 	return nil
 }
