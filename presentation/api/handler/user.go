@@ -1,4 +1,4 @@
-package controller
+package handler
 
 import (
 	"net/http"
@@ -8,15 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserController struct {
+type UserHandler struct {
 	userApp domain.UserApp
 }
 
-func NewUserController(userApp domain.UserApp) *UserController {
-	return &UserController{userApp}
+func NewUserController(userApp domain.UserApp) *UserHandler {
+	return &UserHandler{userApp}
 }
 
-func (user *UserController) Signup(ctx *gin.Context) {
+func (user *UserHandler) Signup(ctx *gin.Context) {
 	var requestBody dto.SignupRequest
 
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
