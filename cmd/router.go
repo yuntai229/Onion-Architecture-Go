@@ -1,4 +1,4 @@
-package presentation
+package cmd
 
 import (
 	domain "onion-architecrure-go/domain/entity"
