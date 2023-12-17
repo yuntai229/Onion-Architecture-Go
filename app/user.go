@@ -5,10 +5,12 @@ import (
 	"onion-architecrure-go/dto"
 )
 
-type UserApp struct{}
+type UserApp struct {
+	userRepo domain.UserRepo
+}
 
-func NewUserApp() domain.UserApp {
-	return &UserApp{}
+func NewUserApp(userRepo domain.UserRepo) domain.UserApp {
+	return &UserApp{userRepo}
 }
 
 func (app *UserApp) Signup(requestBody dto.SignupRequest) *domain.ErrorMessage {

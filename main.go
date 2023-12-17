@@ -4,14 +4,16 @@ import (
 	"net/http"
 	"onion-architecrure-go/app"
 	cmd "onion-architecrure-go/cmd"
+	"onion-architecrure-go/infrastructure/rdb"
 	"time"
 )
 
 func main() {
 
-	userApp := app.NewUser()
-	userApp := app.NewUserApp()
 	db := cmd.InitDb()
+
+	userRepo := rdb.NewUserRepo(db)
+	userApp := app.NewUserApp(userRepo)
 
 	server := &http.Server{
 		Addr:         ":8080",
