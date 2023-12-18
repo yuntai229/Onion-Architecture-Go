@@ -16,7 +16,7 @@ func NewUserHandler(userApp domain.UserApp) *UserHandler {
 	return &UserHandler{userApp}
 }
 
-func (user *UserHandler) Signup(ctx *gin.Context) {
+func (handler *UserHandler) Signup(ctx *gin.Context) {
 	var requestBody dto.SignupRequest
 
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
@@ -26,7 +26,7 @@ func (user *UserHandler) Signup(ctx *gin.Context) {
 		return
 	}
 
-	if err := user.userApp.Signup(requestBody); err != nil {
+	if err := handler.userApp.Signup(requestBody); err != nil {
 		newErr := *err
 		res := domain.Response.ResWithFail(newErr)
 		ctx.JSON(newErr.HttpCode, res)
