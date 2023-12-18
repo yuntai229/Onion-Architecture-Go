@@ -1,11 +1,16 @@
 package extend
 
-import "errors"
+import (
+	"crypto/md5"
+	"encoding/hex"
+)
 
 var Helper HelperTools
 
 type HelperTools struct{}
 
-func (h *HelperTools) err() error {
-	return errors.New("ffff")
+func (h *HelperTools) Hash(value string) string {
+	hashBytes := md5.Sum([]byte(value))
+	hashString := hex.EncodeToString(hashBytes[:])
+	return hashString
 }
