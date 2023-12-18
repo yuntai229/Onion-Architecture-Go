@@ -7,16 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type SqlSetting struct {
-	User     string `mapstructure: user`
-	Password string `mapstructure: password`
-	Host     string `mapstructure: host`
-	Port     string `mapstructure: port`
-	Db       string `mapstructure: db`
-	Charset  string `mapstructure: charset`
-	Timeout  string `mapstructure: timeout`
-}
-
 var Db *gorm.DB
 
 func InitDb() *gorm.DB {
