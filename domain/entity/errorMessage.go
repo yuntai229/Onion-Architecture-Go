@@ -11,5 +11,6 @@ type ErrorMessage struct {
 var (
 	NotFoundErr     = ErrorMessage{http.StatusNotFound, "E0001", "not found"}
 	MissingFieldErr = ErrorMessage{http.StatusBadRequest, "E0002", "missing field"}
-	DbConnectError  = ErrorMessage{http.StatusInternalServerError, "E0003", "Db op failed"}
+	DbConnectErr    = ErrorMessage{http.StatusInternalServerError, "E0003", "Db op failed"}
+	UserExistErr    = ErrorMessage{http.StatusPaymentRequired, "E0004", "user has existed"}
 )
