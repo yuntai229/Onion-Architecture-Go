@@ -22,6 +22,17 @@ func (repo *UserRepo) Create(userData domain.Users) *domain.ErrorMessage {
 	if result.RowsAffected == 0 {
 		return &domain.UserExistErr
 	}
-
 	return nil
+}
+
+func (repo *UserRepo) GetByMail(mail string) (*domain.Users, *domain.ErrorMessage) {
+	var data domain.Users
+	if result := repo.Db.First(&data, "email = ?", mail); result.Error != nil {
+		if result.RowsAffected == 0 {
+			return nil, &domain.UserNotFoundErr
+		}
+		return nil, &domain.DbConnectErr
+	}
+
+	return &data, nil
 }

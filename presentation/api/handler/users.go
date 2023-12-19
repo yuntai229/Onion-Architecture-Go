@@ -34,5 +34,27 @@ func (handler *UserHandler) Signup(ctx *gin.Context) {
 	}
 	res := domain.Response.ResWithSucc(nil)
 	ctx.JSON(http.StatusOK, res)
+}
 
+func (handler *UserHandler) Login(ctx *gin.Context) {
+	var requestBody dto.LoginRequest
+
+	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
+		newErr := domain.MissingFieldErr
+		res := domain.Response.ResWithFail(newErr)
+		ctx.JSON(newErr.HttpCode, res)
+		return
+	}
+
+	jwtToken, err := handler.userApp.Login(requestBody)
+	if err != nil {
+		newErr := *err
+		res := domain.Response.ResWithFail(newErr)
+		ctx.JSON(newErr.HttpCode, res)
+	}
+	resData := dto.LoginResponse{
+		Token: jwtToken,
+	}
+	res := domain.Response.ResWithSucc(resData)
+	ctx.JSON(http.StatusOK, res)
 }
