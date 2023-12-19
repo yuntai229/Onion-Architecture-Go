@@ -20,14 +20,8 @@ func (app *UserApp) Signup(requestBody dto.SignupRequest) *domain.ErrorMessage {
 		Email:        requestBody.Email,
 		HashPassword: extend.Helper.Hash(requestBody.Password),
 	}
-	err, rowsAffect := app.userRepo.Create(userData)
-	if err != nil {
+	if err := app.userRepo.Create(userData); err != nil {
 		return err
 	}
-	if rowsAffect == 0 {
-		return &domain.UserExistErr
-	}
-	return nil
-}
 	return nil
 }

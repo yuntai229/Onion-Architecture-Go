@@ -32,7 +32,6 @@ func (handler *UserHandler) Signup(ctx *gin.Context) {
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
-
 	res := domain.Response.ResWithSucc(nil)
 	ctx.JSON(http.StatusOK, res)
 

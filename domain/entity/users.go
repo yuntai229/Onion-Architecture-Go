@@ -11,7 +11,7 @@ type UserApp interface {
 }
 
 type UserRepo interface {
-	Create(userData Users) (*ErrorMessage, int64)
+	Create(userData Users) *ErrorMessage
 }
 
 type Users struct {

@@ -14,13 +14,14 @@ func NewUserRepo(Db *gorm.DB) domain.UserRepo {
 	return &UserRepo{Db}
 }
 
-func (repo *UserRepo) Create(userData domain.Users) (*domain.ErrorMessage, int64) {
+func (repo *UserRepo) Create(userData domain.Users) *domain.ErrorMessage {
 	result := repo.Db.Where(domain.Users{Email: userData.Email}).FirstOrCreate(&userData)
 	if result.Error != nil {
-		return &domain.DbConnectErr, 0
+		return &domain.DbConnectErr
 	}
-	return nil, result.RowsAffected
-}
+	if result.RowsAffected == 0 {
+		return &domain.UserExistErr
+	}
 
 	return nil
 }
