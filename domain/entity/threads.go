@@ -10,6 +10,7 @@ type Threads struct {
 	gorm.Model
 	UserId  uint
 	Content string
+	Users   Users `gorm:"foreignKey:UserId"`
 }
 
 type ThreadRepo interface {
