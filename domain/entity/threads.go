@@ -18,5 +18,5 @@ type ThreadRepo interface {
 }
 
 type ThreadApp interface {
-	CreatePost(requestBody dto.PostRequest) *ErrorMessage
+	CreatePost(requestBody dto.PostRequest, userId uint) *ErrorMessage
 }

@@ -13,8 +13,9 @@ func NewThreadApp(threadRepo domain.ThreadRepo) domain.ThreadApp {
 	return &ThreadApp{threadRepo}
 }
 
-func (app *ThreadApp) CreatePost(requestBody dto.PostRequest) *domain.ErrorMessage {
+func (app *ThreadApp) CreatePost(requestBody dto.PostRequest, userId uint) *domain.ErrorMessage {
 	threadData := domain.Threads{
+		UserId:  userId,
 		Content: requestBody.Content,
 	}
 	return app.threadRepo.Create(threadData)

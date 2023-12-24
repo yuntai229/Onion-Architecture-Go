@@ -18,7 +18,6 @@ func NewThreadHandler(threadApp domain.ThreadApp) *threadHandler {
 
 func (handler *threadHandler) CreatePost(ctx *gin.Context) {
 	var requestBody dto.PostRequest
-
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
 		newErr := domain.MissingFieldErr
 		res := domain.Response.ResWithFail(newErr)
@@ -26,7 +25,15 @@ func (handler *threadHandler) CreatePost(ctx *gin.Context) {
 		return
 	}
 
-	if err := handler.threadApp.CreatePost(requestBody); err != nil {
+	userId, ok := ctx.Get("UserId")
+	if !ok {
+		newErr := domain.TokenInvalidErr
+		res := domain.Response.ResWithFail(newErr)
+		ctx.JSON(newErr.HttpCode, res)
+		return
+	}
+
+	if err := handler.threadApp.CreatePost(requestBody, userId.(uint)); err != nil {
 		newErr := *err
 		res := domain.Response.ResWithFail(newErr)
 		ctx.JSON(newErr.HttpCode, res)
@@ -34,5 +41,4 @@ func (handler *threadHandler) CreatePost(ctx *gin.Context) {
 	}
 	res := domain.Response.ResWithSucc(nil)
 	ctx.JSON(http.StatusOK, res)
-
 }

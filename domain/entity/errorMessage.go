@@ -16,4 +16,6 @@ var (
 	UserNotFoundErr      = ErrorMessage{http.StatusNotFound, "E0005", "user not found"}
 	PasswordIncorrectErr = ErrorMessage{http.StatusPaymentRequired, "E0006", "password incorrect"}
 	TokenGenFail         = ErrorMessage{http.StatusInternalServerError, "E0007", "jwt token gen fail"}
+	MissingTokenErr      = ErrorMessage{http.StatusUnauthorized, "E0008", "missing authorization token"}
+	TokenInvalidErr      = ErrorMessage{http.StatusUnauthorized, "E0010", "invalid token"}
 )
