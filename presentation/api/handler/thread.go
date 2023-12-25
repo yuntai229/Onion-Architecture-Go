@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"onion-architecrure-go/domain/entity"
 	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
+	"onion-architecrure-go/extend"
 
 	"github.com/gin-gonic/gin"
 )
@@ -66,17 +66,25 @@ func (handler *threadHandler) GetPost(ctx *gin.Context) {
 		userId = params.UserId
 	}
 
-	fmt.Println(params.UserId)
-	fmt.Println(params.Page)
-	fmt.Println(params.PageSize)
-
-	if err := handler.threadApp.GetPost(params.PageRequest, userId.(uint)); err != nil {
+	threadData, err := handler.threadApp.GetPost(params.PageRequest, userId.(uint))
+	if err != nil {
 		newErr := *err
 		res := entity.Response.ResWithFail(newErr)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
 
-	res := entity.Response.ResWithSucc(nil)
+	var resData []dto.GetPostresponse
+	for _, element := range threadData {
+		resData = append(resData, dto.GetPostresponse{
+			Id:        element.ID,
+			UserId:    element.UserId,
+			Content:   element.Content,
+			CreatedAt: extend.Helper.FormatToTimeString(element.CreatedAt),
+			UpdatedAt: extend.Helper.FormatToTimeString(element.UpdatedAt),
+		})
+	}
+
+	res := entity.Response.ResWithSucc(resData)
 	ctx.JSON(http.StatusOK, res)
 }

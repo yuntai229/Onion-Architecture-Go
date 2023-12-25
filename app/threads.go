@@ -22,7 +22,11 @@ func (app *ThreadApp) CreatePost(requestBody dto.PostRequest, userId uint) *enti
 	return app.threadRepo.Create(threadData)
 }
 
-func (app *ThreadApp) GetPost(pagination entity.PageRequest, userId uint) *entity.ErrorMessage {
+func (app *ThreadApp) GetPost(pagination entity.PageRequest, userId uint) ([]entity.Threads, *entity.ErrorMessage) {
+	threadData, err := app.threadRepo.GetByUserId(pagination, userId)
+	if err != nil {
+		return threadData, err
+	}
 
-	return nil
+	return threadData, nil
 }
