@@ -1,7 +1,8 @@
 package rdb
 
 import (
-	domain "onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/ports"
 
 	"gorm.io/gorm"
 )
@@ -10,28 +11,28 @@ type UserRepo struct {
 	Db *gorm.DB
 }
 
-func NewUserRepo(Db *gorm.DB) domain.UserRepo {
+func NewUserRepo(Db *gorm.DB) ports.UserRepo {
 	return &UserRepo{Db}
 }
 
-func (repo *UserRepo) Create(userData domain.Users) *domain.ErrorMessage {
-	result := repo.Db.Where(domain.Users{Email: userData.Email}).FirstOrCreate(&userData)
+func (repo *UserRepo) Create(userData entity.Users) *entity.ErrorMessage {
+	result := repo.Db.Where(entity.Users{Email: userData.Email}).FirstOrCreate(&userData)
 	if result.Error != nil {
-		return &domain.DbConnectErr
+		return &entity.DbConnectErr
 	}
 	if result.RowsAffected == 0 {
-		return &domain.UserExistErr
+		return &entity.UserExistErr
 	}
 	return nil
 }
 
-func (repo *UserRepo) GetByMail(mail string) (*domain.Users, *domain.ErrorMessage) {
-	var data domain.Users
+func (repo *UserRepo) GetByMail(mail string) (*entity.Users, *entity.ErrorMessage) {
+	var data entity.Users
 	if result := repo.Db.First(&data, "email = ?", mail); result.Error != nil {
 		if result.RowsAffected == 0 {
-			return nil, &domain.UserNotFoundErr
+			return nil, &entity.UserNotFoundErr
 		}
-		return nil, &domain.DbConnectErr
+		return nil, &entity.DbConnectErr
 	}
 
 	return &data, nil

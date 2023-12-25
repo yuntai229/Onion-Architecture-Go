@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	domain "onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/ports"
 	handler "onion-architecrure-go/presentation/api/handler"
 	"onion-architecrure-go/presentation/api/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
-func InitRouter(userApp domain.UserApp, threadApp domain.ThreadApp) *gin.Engine {
+func InitRouter(userApp ports.UserApp, threadApp ports.ThreadApp) *gin.Engine {
 	router := gin.Default()
 
 	jwtMiddelware := middleware.NewJwtMiddleware()
@@ -22,6 +22,7 @@ func InitRouter(userApp domain.UserApp, threadApp domain.ThreadApp) *gin.Engine 
 	router.POST("/user/login", userHandler.Login)
 
 	router.POST("threads/post", jwtMiddelware.Auth(), threadHandler.CreatePost)
+	router.GET("threads/post", jwtMiddelware.Auth(), threadHandler.GetPost)
 
 	return router
 }

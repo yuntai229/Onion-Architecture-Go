@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	domain "onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/entity"
 	"onion-architecrure-go/extend"
 	"strings"
 
@@ -19,8 +19,8 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 
 		tokenArr := ctx.Request.Header["Authorization"]
 		if len(tokenArr) == 0 {
-			newErr := domain.MissingTokenErr
-			res := domain.Response.ResWithFail(newErr)
+			newErr := entity.MissingTokenErr
+			res := entity.Response.ResWithFail(newErr)
 			ctx.JSON(newErr.HttpCode, res)
 			ctx.Abort()
 			return
@@ -30,8 +30,8 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 
 		isValid, claims := extend.Helper.VerifyJwt(tokenString)
 		if !isValid {
-			newErr := domain.TokenInvalidErr
-			res := domain.Response.ResWithFail(newErr)
+			newErr := entity.TokenInvalidErr
+			res := entity.Response.ResWithFail(newErr)
 			ctx.JSON(newErr.HttpCode, res)
 			ctx.Abort()
 			return

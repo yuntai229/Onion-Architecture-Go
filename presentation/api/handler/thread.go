@@ -1,44 +1,82 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
-	domain "onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
 
 	"github.com/gin-gonic/gin"
 )
 
 type threadHandler struct {
-	threadApp domain.ThreadApp
+	threadApp ports.ThreadApp
 }
 
-func NewThreadHandler(threadApp domain.ThreadApp) *threadHandler {
+func NewThreadHandler(threadApp ports.ThreadApp) *threadHandler {
 	return &threadHandler{threadApp}
 }
 
 func (handler *threadHandler) CreatePost(ctx *gin.Context) {
 	var requestBody dto.PostRequest
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
-		newErr := domain.MissingFieldErr
-		res := domain.Response.ResWithFail(newErr)
+		newErr := entity.MissingFieldErr
+		res := entity.Response.ResWithFail(newErr)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
 
 	userId, ok := ctx.Get("UserId")
 	if !ok {
-		newErr := domain.TokenInvalidErr
-		res := domain.Response.ResWithFail(newErr)
+		newErr := entity.TokenInvalidErr
+		res := entity.Response.ResWithFail(newErr)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
 
 	if err := handler.threadApp.CreatePost(requestBody, userId.(uint)); err != nil {
 		newErr := *err
-		res := domain.Response.ResWithFail(newErr)
+		res := entity.Response.ResWithFail(newErr)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
-	res := domain.Response.ResWithSucc(nil)
+	res := entity.Response.ResWithSucc(nil)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (handler *threadHandler) GetPost(ctx *gin.Context) {
+	var params dto.GetPostRequest
+	if err := ctx.ShouldBind(&params); err != nil {
+		newErr := entity.MissingFieldErr
+		res := entity.Response.ResWithFail(newErr)
+		ctx.JSON(newErr.HttpCode, res)
+		return
+	}
+
+	userId, ok := ctx.Get("UserId")
+	if !ok {
+		newErr := entity.TokenInvalidErr
+		res := entity.Response.ResWithFail(newErr)
+		ctx.JSON(newErr.HttpCode, res)
+		return
+	}
+
+	if params.UserId != 0 {
+		userId = params.UserId
+	}
+
+	fmt.Println(params.UserId)
+	fmt.Println(params.Page)
+	fmt.Println(params.PageSize)
+
+	if err := handler.threadApp.GetPost(params.PageRequest, userId.(uint)); err != nil {
+		newErr := *err
+		res := entity.Response.ResWithFail(newErr)
+		ctx.JSON(newErr.HttpCode, res)
+		return
+	}
+
+	res := entity.Response.ResWithSucc(nil)
 	ctx.JSON(http.StatusOK, res)
 }

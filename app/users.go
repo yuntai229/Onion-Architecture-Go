@@ -1,21 +1,22 @@
 package app
 
 import (
-	domain "onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
 )
 
 type UserApp struct {
-	userRepo domain.UserRepo
+	userRepo ports.UserRepo
 }
 
-func NewUserApp(userRepo domain.UserRepo) domain.UserApp {
+func NewUserApp(userRepo ports.UserRepo) ports.UserApp {
 	return &UserApp{userRepo}
 }
 
-func (app *UserApp) Signup(requestBody dto.SignupRequest) *domain.ErrorMessage {
-	userData := domain.Users{
+func (app *UserApp) Signup(requestBody dto.SignupRequest) *entity.ErrorMessage {
+	userData := entity.Users{
 		Name:         requestBody.Name,
 		Email:        requestBody.Email,
 		HashPassword: extend.Helper.Hash(requestBody.Password),
@@ -26,7 +27,7 @@ func (app *UserApp) Signup(requestBody dto.SignupRequest) *domain.ErrorMessage {
 	return nil
 }
 
-func (app *UserApp) Login(requestBody dto.LoginRequest) (string, *domain.ErrorMessage) {
+func (app *UserApp) Login(requestBody dto.LoginRequest) (string, *entity.ErrorMessage) {
 	email := requestBody.Email
 	userData, err := app.userRepo.GetByMail(email)
 	if err != nil {
@@ -34,12 +35,12 @@ func (app *UserApp) Login(requestBody dto.LoginRequest) (string, *domain.ErrorMe
 	}
 
 	if validateResult := validatePassword(userData.HashPassword, requestBody.Password); !validateResult {
-		return "", &domain.PasswordIncorrectErr
+		return "", &entity.PasswordIncorrectErr
 	}
 
 	jwt, jwtErr := extend.Helper.GenJwt(userData.ID)
 	if jwtErr != nil {
-		return "", &domain.TokenGenFail
+		return "", &entity.TokenGenFail
 	}
 
 	return jwt, nil
