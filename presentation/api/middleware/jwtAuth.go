@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"onion-architecrure-go/domain/entity"
-	"onion-architecrure-go/extend"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +27,7 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 
 		tokenString := strings.Split(tokenArr[0], "Bearer ")[1]
 
-		isValid, claims := extend.Helper.VerifyJwt(tokenString)
+		isValid, claims := entity.Claims.VerifyJwt(tokenString)
 		if !isValid {
 			newErr := entity.TokenInvalidErr
 			res := entity.Response.ResWithFail(newErr)

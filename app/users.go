@@ -38,7 +38,7 @@ func (app *UserApp) Login(requestBody dto.LoginRequest) (string, *entity.ErrorMe
 		return "", &entity.PasswordIncorrectErr
 	}
 
-	jwt, jwtErr := extend.Helper.GenJwt(userData.ID)
+	jwt, jwtErr := entity.Claims.GenJwt(userData.ID)
 	if jwtErr != nil {
 		return "", &entity.TokenGenFail
 	}
