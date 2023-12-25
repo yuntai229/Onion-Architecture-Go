@@ -27,7 +27,8 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 
 		tokenString := strings.Split(tokenArr[0], "Bearer ")[1]
 
-		isValid, claims := entity.Claims.VerifyJwt(tokenString)
+		var authClaims entity.UserAuthClaims
+		isValid, claims := authClaims.VerifyJwt(tokenString)
 		if !isValid {
 			newErr := entity.TokenInvalidErr
 			res := entity.Response.ResWithFail(newErr)

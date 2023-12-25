@@ -26,14 +26,14 @@ func (repo *UserRepo) Create(userData entity.Users) *entity.ErrorMessage {
 	return nil
 }
 
-func (repo *UserRepo) GetByMail(mail string) (*entity.Users, *entity.ErrorMessage) {
+func (repo *UserRepo) GetByMail(mail string) (entity.Users, *entity.ErrorMessage) {
 	var data entity.Users
 	if result := repo.Db.First(&data, "email = ?", mail); result.Error != nil {
 		if result.RowsAffected == 0 {
-			return nil, &entity.UserNotFoundErr
+			return data, &entity.UserNotFoundErr
 		}
-		return nil, &entity.DbConnectErr
+		return data, &entity.DbConnectErr
 	}
 
-	return &data, nil
+	return data, nil
 }

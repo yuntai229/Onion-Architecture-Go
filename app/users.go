@@ -38,7 +38,10 @@ func (app *UserApp) Login(requestBody dto.LoginRequest) (string, *entity.ErrorMe
 		return "", &entity.PasswordIncorrectErr
 	}
 
-	jwt, jwtErr := entity.Claims.GenJwt(userData.ID)
+	var authClaims = entity.UserAuthClaims{
+		UserID: userData.ID,
+	}
+	jwt, jwtErr := authClaims.GenJwt()
 	if jwtErr != nil {
 		return "", &entity.TokenGenFail
 	}

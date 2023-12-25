@@ -12,5 +12,5 @@ type UserApp interface {
 
 type UserRepo interface {
 	Create(userData entity.Users) *entity.ErrorMessage
-	GetByMail(mail string) (*entity.Users, *entity.ErrorMessage)
+	GetByMail(mail string) (entity.Users, *entity.ErrorMessage)
 }
