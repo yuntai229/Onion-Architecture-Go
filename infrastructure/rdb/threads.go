@@ -23,12 +23,16 @@ func (repo *ThreadRepo) Create(threadData entity.Threads) *entity.ErrorMessage {
 	return nil
 }
 
-func (repo *ThreadRepo) GetByUserId(pagination entity.PageRequest, userId uint) ([]entity.Threads, *entity.ErrorMessage) {
+func (repo *ThreadRepo) GetByUserId(pagination *entity.Pagination, userId uint) ([]entity.Threads, *entity.ErrorMessage) {
 	var data []entity.Threads
-	result := repo.Db.Debug().Scopes(pagination.NewDbPaginationScope()).Where("user_id = ?", userId).Find(&data)
+	var count int64
+
+	result := repo.Db.Scopes(pagination.NewDbPaginationScope(data, repo.Db)).Where("user_id = ?", userId).Order(pagination.ComposeOrderQuery()).Find(&data)
 	if result.Error != nil {
 		return data, &entity.DbConnectErr
 	}
+	repo.Db.Model(data).Where("user_id = ?", userId).Count(&count)
+	pagination.CalculatePage(count)
 
 	return data, nil
 }

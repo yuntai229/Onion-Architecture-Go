@@ -7,9 +7,8 @@ type PostRequest struct {
 }
 
 type GetPostRequest struct {
-	entity.PageRequest
-	UserId  uint   `form:"userId"`
-	SortKey string `form:"sortKey"`
+	entity.Pagination
+	UserId uint `form:"userId"`
 }
 
 type GetPostresponse struct {

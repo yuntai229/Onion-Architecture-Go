@@ -1,16 +1,14 @@
 package entity
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 var Response ResponseEntity
 
 type ResponseEntity struct{}
 
 func (r *ResponseEntity) ResWithSucc(data any) gin.H {
-	type empty struct{}
-	if data == nil {
-		data = empty{}
-	}
 	return gin.H{
 		"code":    "0000",
 		"message": "Succ",

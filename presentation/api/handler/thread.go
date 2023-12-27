@@ -62,11 +62,11 @@ func (handler *threadHandler) GetPost(ctx *gin.Context) {
 		return
 	}
 
-	if params.UserId != 0 {
-		userId = params.UserId
+	if params.UserId == 0 {
+		params.UserId = userId.(uint)
 	}
 
-	threadData, err := handler.threadApp.GetPost(params.PageRequest, userId.(uint))
+	threadData, err := handler.threadApp.GetPost(&params.Pagination, params)
 	if err != nil {
 		newErr := *err
 		res := entity.Response.ResWithFail(newErr)
@@ -85,6 +85,6 @@ func (handler *threadHandler) GetPost(ctx *gin.Context) {
 		})
 	}
 
-	res := entity.Response.ResWithSucc(resData)
+	res := entity.Response.ResWithSucc(params.Pagination.Format(resData))
 	ctx.JSON(http.StatusOK, res)
 }
