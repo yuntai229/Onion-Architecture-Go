@@ -1,24 +1,33 @@
 package entity
 
-import (
-	"github.com/gin-gonic/gin"
-)
-
 var Response ResponseEntity
 
 type ResponseEntity struct{}
 
-func (r *ResponseEntity) ResWithSucc(data any) gin.H {
-	return gin.H{
-		"code":    "0000",
-		"message": "Succ",
-		"data":    data,
-	}
+type ResSucc struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+	Data    any    `json:"data"`
 }
 
-func (r *ResponseEntity) ResWithFail(err ErrorMessage) gin.H {
-	return gin.H{
-		"code":    err.Code,
-		"message": err.Message,
+type ResFail struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+func (r *ResponseEntity) ResWithSucc(data any) ResSucc {
+	res := ResSucc{
+		Code:    "0000",
+		Message: "Succ",
+		Data:    data,
 	}
+	return res
+}
+
+func (r *ResponseEntity) ResWithFail(err ErrorMessage) ResFail {
+	res := ResFail{
+		Code:    err.Code,
+		Message: err.Message,
+	}
+	return res
 }
