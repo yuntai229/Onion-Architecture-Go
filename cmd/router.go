@@ -18,11 +18,11 @@ func InitRouter(userApp ports.UserApp, threadApp ports.ThreadApp) *gin.Engine {
 	threadHandler := handler.NewThreadHandler(threadApp)
 
 	router.GET("/ping", homeHandler.Ping)
-	router.POST("/user/signup", userHandler.Signup)
-	router.POST("/user/login", userHandler.Login)
+	router.POST("/users/signup", userHandler.Signup)
+	router.POST("/users/login", userHandler.Login)
 
-	router.POST("threads/post", jwtMiddelware.Auth(), threadHandler.CreatePost)
-	router.GET("threads/post", jwtMiddelware.Auth(), threadHandler.GetPost)
+	router.POST("/threads/post", jwtMiddelware.Auth(), threadHandler.CreatePost)
+	router.GET("/threads/post", jwtMiddelware.Auth(), threadHandler.GetPost)
 
 	return router
 }
