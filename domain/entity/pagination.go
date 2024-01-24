@@ -8,16 +8,12 @@ import (
 )
 
 type Pagination struct {
-	Page     int `form:"page,default=1" json:"page"`
-	PageSize int `form:"pageSize,default=20" json:"pageSize"`
-	Total    int `form:"pageSize" json:"total"`
-	LastPage int `form:"pageSize" json:"lastPage"`
-	PaginationSortOption
-}
-
-type PaginationSortOption struct {
-	OrderBy string `form:"orderBy,default=id" json:"orderBy"`
-	Sort    string `form:"sort,default=desc" json:"sort"`
+	Page     int    `form:"page,default=1" json:"page"`
+	PageSize int    `form:"pageSize,default=20" json:"pageSize"`
+	Total    int    `form:"pageSize" json:"total"`
+	LastPage int    `form:"pageSize" json:"lastPage"`
+	OrderBy  string `form:"orderBy,default=id" json:"orderBy"`
+	Sort     string `form:"sort,default=desc" json:"sort"`
 }
 
 type PageResponse struct {
@@ -48,10 +44,8 @@ func (entity *Pagination) Format(data any) PageResponse {
 			PageSize: entity.PageSize,
 			Total:    entity.Total,
 			LastPage: entity.LastPage,
-			PaginationSortOption: PaginationSortOption{
-				OrderBy: entity.OrderBy,
-				Sort:    entity.Sort,
-			},
+			OrderBy:  entity.OrderBy,
+			Sort:     entity.Sort,
 		},
 		Collection: data,
 	}

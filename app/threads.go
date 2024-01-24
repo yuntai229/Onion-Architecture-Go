@@ -23,10 +23,6 @@ func (app *ThreadApp) CreatePost(requestBody dto.PostRequest, userId uint) *enti
 }
 
 func (app *ThreadApp) GetPost(pagination *entity.Pagination, params dto.GetPostRequest) ([]entity.Threads, *entity.ErrorMessage) {
-	pagination.PaginationSortOption = entity.PaginationSortOption{
-		OrderBy: params.OrderBy,
-		Sort:    params.Sort,
-	}
 	userId := params.UserId
 	threadData, err := app.threadRepo.GetByUserId(pagination, userId)
 	if err != nil {
