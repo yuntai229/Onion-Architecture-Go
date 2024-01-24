@@ -52,6 +52,7 @@ func (handler *UserHandler) Login(ctx *gin.Context) {
 		newErr := *err
 		res := entity.Response.ResWithFail(newErr)
 		ctx.JSON(newErr.HttpCode, res)
+		return
 	}
 	resData := dto.LoginResponse{
 		Token: jwtToken,
