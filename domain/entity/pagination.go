@@ -10,8 +10,8 @@ import (
 type Pagination struct {
 	Page     int    `form:"page,default=1" json:"page"`
 	PageSize int    `form:"pageSize,default=20" json:"pageSize"`
-	Total    int    `form:"pageSize" json:"total"`
-	LastPage int    `form:"pageSize" json:"lastPage"`
+	Total    int    `form:"total" json:"total"`
+	LastPage int    `form:"lastPage" json:"lastPage"`
 	OrderBy  string `form:"orderBy,default=id" json:"orderBy"`
 	Sort     string `form:"sort,default=desc" json:"sort"`
 }
