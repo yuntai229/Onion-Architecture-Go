@@ -5,8 +5,8 @@ import (
 )
 
 type Threads struct {
-	gorm.Model
-	UserId  uint
-	Content string
-	Users   Users `gorm:"foreignKey:UserId"`
+	gorm.Model `mapstructure:",squash"`
+	UserId     uint
+	Content    string
+	Users      Users `gorm:"foreignKey:UserId"`
 }
