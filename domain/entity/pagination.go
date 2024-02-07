@@ -21,7 +21,7 @@ type PageResponse struct {
 	Collection any        `json:"collection"`
 }
 
-func (entity *Pagination) NewDbPaginationScope(table any, Db *gorm.DB) func(db *gorm.DB) *gorm.DB {
+func (entity *Pagination) NewDbPaginationScope() func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		offset := (entity.Page - 1) * entity.PageSize
 		return db.Offset(offset).Limit(entity.PageSize)

@@ -27,7 +27,7 @@ func (repo *ThreadRepo) GetByUserId(pagination *entity.Pagination, userId uint) 
 	var data []entity.Threads
 	var count int64
 
-	result := repo.Db.Scopes(pagination.NewDbPaginationScope(data, repo.Db)).Where("user_id = ?", userId).Order(pagination.ComposeOrderQuery()).Find(&data)
+	result := repo.Db.Scopes(pagination.NewDbPaginationScope()).Where("user_id = ?", userId).Order(pagination.ComposeOrderQuery()).Find(&data)
 	if result.Error != nil {
 		return data, &entity.DbConnectErr
 	}
