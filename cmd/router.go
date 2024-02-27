@@ -1,21 +1,30 @@
 package cmd
 
 import (
-	"onion-architecrure-go/domain/ports"
-	handler "onion-architecrure-go/presentation/api/handler"
+	"onion-architecrure-go/presentation/api/handler"
 	"onion-architecrure-go/presentation/api/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
-func InitRouter(userApp ports.UserApp, threadApp ports.ThreadApp) *gin.Engine {
+func InitRouter(handlers ...any) *gin.Engine {
 	router := gin.Default()
 
-	jwtMiddelware := middleware.NewJwtMiddleware()
+	var homeHandler *handler.HomeHandler
+	var userHandler *handler.UserHandler
+	var threadHandler *handler.ThreadHandler
+	for _, item := range handlers {
+		switch handler := item.(type) {
+		case *handler.HomeHandler:
+			homeHandler = handler
+		case *handler.UserHandler:
+			userHandler = handler
+		case *handler.ThreadHandler:
+			threadHandler = handler
+		}
+	}
 
-	homeHandler := handler.NewHomeHandler()
-	userHandler := handler.NewUserHandler(userApp)
-	threadHandler := handler.NewThreadHandler(threadApp)
+	jwtMiddelware := middleware.NewJwtMiddleware()
 
 	router.GET("/ping", homeHandler.Ping)
 	router.POST("/users/signup", userHandler.Signup)

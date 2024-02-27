@@ -10,15 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type threadHandler struct {
+type ThreadHandler struct {
 	threadApp ports.ThreadApp
 }
 
-func NewThreadHandler(threadApp ports.ThreadApp) *threadHandler {
-	return &threadHandler{threadApp}
+func NewThreadHandler(threadApp ports.ThreadApp) *ThreadHandler {
+	return &ThreadHandler{threadApp}
 }
 
-func (handler *threadHandler) CreatePost(ctx *gin.Context) {
+func (handler *ThreadHandler) CreatePost(ctx *gin.Context) {
 	var requestBody dto.PostRequest
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
 		newErr := entity.MissingFieldErr
@@ -45,7 +45,7 @@ func (handler *threadHandler) CreatePost(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func (handler *threadHandler) GetPost(ctx *gin.Context) {
+func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 	var params dto.GetPostRequest
 	if err := ctx.ShouldBind(&params); err != nil {
 		newErr := entity.MissingFieldErr

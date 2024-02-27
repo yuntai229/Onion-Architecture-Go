@@ -11,16 +11,11 @@ import (
 func main() {
 
 	db := cmd.InitDb()
-
-	userRepo := rdb.NewUserRepo(db)
-	threadRepo := rdb.NewThreadRepo(db)
-
-	userApp := app.NewUserApp(userRepo)
-	threadApp := app.NewThreadApp(threadRepo)
+	handlers := cmd.InitApp(db)
 
 	server := &http.Server{
 		Addr:         ":8080",
-		Handler:      cmd.InitRouter(userApp, threadApp),
+		Handler:      cmd.InitRouter(handlers),
 		ReadTimeout:  60 * time.Second,
 		WriteTimeout: 60 * time.Second,
 	}
