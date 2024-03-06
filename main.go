@@ -13,7 +13,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:         ":8080",
-		Handler:      cmd.InitRouter(handlers, middlewares, logger),
+		Handler:      cmd.InitRouter(handlers, middlewares),
 		ReadTimeout:  60 * time.Second,
 		WriteTimeout: 60 * time.Second,
 	}

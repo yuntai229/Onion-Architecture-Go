@@ -5,10 +5,9 @@ import (
 	"onion-architecrure-go/presentation/api/middleware"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
-func InitRouter(handlers []any, middlewares []any, logger *zap.Logger) *gin.Engine {
+func InitRouter(handlers []any, middlewares []any) *gin.Engine {
 	router := gin.Default()
 
 	var homeHandler *handler.HomeHandler
