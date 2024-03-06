@@ -5,36 +5,47 @@ import (
 	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
+
+	"go.uber.org/zap"
 )
 
 type UserApp struct {
-	userRepo ports.UserRepo
+	UserRepo ports.UserRepo
+	Logger   *zap.Logger
 }
 
-func NewUserApp(userRepo ports.UserRepo) ports.UserApp {
-	return &UserApp{userRepo}
+func NewUserApp(userRepo ports.UserRepo, logger *zap.Logger) ports.UserApp {
+	return &UserApp{userRepo, logger}
 }
 
-func (app *UserApp) Signup(requestBody dto.SignupRequest) *entity.ErrorMessage {
+func (app *UserApp) Signup(requestId string, requestBody dto.SignupRequest) *entity.ErrorMessage {
+	app.Logger.Info("[App][UserApp][Signup] Entry",
+		zap.String("requestId", requestId),
+	)
+
 	userData := entity.Users{
 		Name:         requestBody.Name,
 		Email:        requestBody.Email,
 		HashPassword: extend.Helper.Hash(requestBody.Password),
 	}
-	if err := app.userRepo.Create(userData); err != nil {
+	if err := app.UserRepo.Create(requestId, userData); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (app *UserApp) Login(requestBody dto.LoginRequest) (string, *entity.ErrorMessage) {
+func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (string, *entity.ErrorMessage) {
+	app.Logger.Info("[App][UserApp][Login] Entry",
+		zap.String("requestId", requestId),
+	)
+
 	email := requestBody.Email
-	userData, err := app.userRepo.GetByMail(email)
+	userData, err := app.UserRepo.GetByMail(requestId, email)
 	if err != nil {
 		return "", err
 	}
 
-	if validateResult := validatePassword(userData.HashPassword, requestBody.Password); !validateResult {
+	if validateResult := app.validatePassword(requestId, userData.HashPassword, requestBody.Password); !validateResult {
 		return "", &entity.PasswordIncorrectErr
 	}
 
@@ -43,14 +54,25 @@ func (app *UserApp) Login(requestBody dto.LoginRequest) (string, *entity.ErrorMe
 	}
 	jwt, jwtErr := authClaims.GenJwt()
 	if jwtErr != nil {
+		app.Logger.Error("[App][UserApp][Login] Token gen error",
+			zap.String("requestId", requestId),
+			zap.Error(jwtErr),
+		)
 		return "", &entity.TokenGenFail
 	}
 
 	return jwt, nil
 }
 
-func validatePassword(hashed, unHashed string) bool {
+func (app *UserApp) validatePassword(requestId, hashed, unHashed string) bool {
+	app.Logger.Info("[App][UserApp][validatePassword] Entry",
+		zap.String("requestId", requestId),
+	)
+
 	if extend.Helper.Hash(unHashed) != hashed {
+		app.Logger.Info("[App][UserApp][validatePassword] Password not correct",
+			zap.String("requestId", requestId),
+		)
 		return false
 	}
 	return true

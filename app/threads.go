@@ -4,30 +4,40 @@ import (
 	"onion-architecrure-go/domain/entity"
 	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
+
+	"go.uber.org/zap"
 )
 
 type ThreadApp struct {
-	threadRepo ports.ThreadRepo
+	ThreadRepo ports.ThreadRepo
+	Logger     *zap.Logger
 }
 
-func NewThreadApp(threadRepo ports.ThreadRepo) ports.ThreadApp {
-	return &ThreadApp{threadRepo}
+func NewThreadApp(threadRepo ports.ThreadRepo, logger *zap.Logger) ports.ThreadApp {
+	return &ThreadApp{threadRepo, logger}
 }
 
-func (app *ThreadApp) CreatePost(requestBody dto.PostRequest, userId uint) *entity.ErrorMessage {
+func (app *ThreadApp) CreatePost(requestId string, requestBody dto.PostRequest, userId uint) *entity.ErrorMessage {
+	app.Logger.Info("[App][ThreadApp][CreatePost] Entry",
+		zap.String("requestId", requestId),
+		zap.Uint("userId", userId),
+		zap.Any("requestBody", requestBody),
+	)
 	threadData := entity.Threads{
 		UserId:  userId,
 		Content: requestBody.Content,
 	}
-	return app.threadRepo.Create(threadData)
+	return app.ThreadRepo.Create(requestId, threadData)
 }
 
-func (app *ThreadApp) GetPost(pagination *entity.Pagination, params dto.GetPostRequest) ([]entity.Threads, *entity.ErrorMessage) {
-	userId := params.UserId
-	threadData, err := app.threadRepo.GetByUserId(pagination, userId)
-	if err != nil {
-		return threadData, err
-	}
+func (app *ThreadApp) GetPost(requestId string, pagination *entity.Pagination, params dto.GetPostRequest) ([]entity.Threads, *entity.ErrorMessage) {
+	app.Logger.Info("[App][ThreadApp][GetPost] Entry",
+		zap.String("requestId", requestId),
+		zap.Any("pagination", pagination),
+		zap.Any("params", params),
+	)
 
-	return threadData, nil
+	userId := params.UserId
+	return app.ThreadRepo.GetByUserId(requestId, pagination, userId)
+
 }

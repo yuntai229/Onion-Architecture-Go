@@ -15,13 +15,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
+	"go.uber.org/zap"
 )
 
 func TestUsersHandler_Signup(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	ctrl := gomock.NewController(t)
 	mockUserApp := mock_ports.NewMockUserApp(ctrl)
-	handler := handler.NewUserHandler(mockUserApp)
+	mockLogger := zap.NewNop()
+	handler := handler.NewUserHandler(mockUserApp, mockLogger)
 	defer ctrl.Finish()
 
 	router := gin.New()
@@ -56,7 +58,7 @@ func TestUsersHandler_Signup(t *testing.T) {
 		jsons, _ := json.Marshal(signupRequest)
 		Convey("成功", func() {
 			gomock.InOrder(
-				mockUserApp.EXPECT().Signup(signupRequest).Return(nil),
+				mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(nil),
 			)
 			req := httptest.NewRequest(http.MethodPost, testUrl, bytes.NewBuffer(jsons))
 			resp := httptest.NewRecorder()
@@ -74,7 +76,7 @@ func TestUsersHandler_Signup(t *testing.T) {
 
 		Convey("失敗 - 帳號已存在", func() {
 			gomock.InOrder(
-				mockUserApp.EXPECT().Signup(signupRequest).Return(&entity.UserExistErr),
+				mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&entity.UserExistErr),
 			)
 			req := httptest.NewRequest(http.MethodPost, testUrl, bytes.NewBuffer(jsons))
 			resp := httptest.NewRecorder()
@@ -97,7 +99,7 @@ func TestUsersHandler_Signup(t *testing.T) {
 			Password: "ooo",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Signup(signupRequest).Return(&entity.DbConnectErr),
+			mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&entity.DbConnectErr),
 		)
 
 		jsons, _ := json.Marshal(signupRequest)
@@ -119,7 +121,8 @@ func TestUsersHandler_Login(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	ctrl := gomock.NewController(t)
 	mockUserApp := mock_ports.NewMockUserApp(ctrl)
-	handler := handler.NewUserHandler(mockUserApp)
+	mockLogger := zap.NewNop()
+	handler := handler.NewUserHandler(mockUserApp, mockLogger)
 	defer ctrl.Finish()
 
 	router := gin.New()
@@ -152,7 +155,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			Password: "test",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Login(loginRequest).Return("", &entity.UserNotFoundErr),
+			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &entity.UserNotFoundErr),
 		)
 
 		jsons, _ := json.Marshal(loginRequest)
@@ -179,7 +182,7 @@ func TestUsersHandler_Login(t *testing.T) {
 		}
 		Convey("密碼正確", func() {
 			gomock.InOrder(
-				mockUserApp.EXPECT().Login(loginRequest).Return(jwtToken, nil),
+				mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return(jwtToken, nil),
 			)
 
 			jsons, _ := json.Marshal(loginRequest)
@@ -199,7 +202,7 @@ func TestUsersHandler_Login(t *testing.T) {
 
 		Convey("密碼錯誤", func() {
 			gomock.InOrder(
-				mockUserApp.EXPECT().Login(loginRequest).Return("", &entity.PasswordIncorrectErr),
+				mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &entity.PasswordIncorrectErr),
 			)
 
 			jsons, _ := json.Marshal(loginRequest)
@@ -223,7 +226,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			Password: "test",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Login(loginRequest).Return("", &entity.TokenGenFail),
+			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &entity.TokenGenFail),
 		)
 
 		jsons, _ := json.Marshal(loginRequest)
@@ -246,7 +249,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			Password: "test",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Login(loginRequest).Return("", &entity.DbConnectErr),
+			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &entity.DbConnectErr),
 		)
 
 		jsons, _ := json.Marshal(loginRequest)

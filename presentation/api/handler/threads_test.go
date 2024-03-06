@@ -21,6 +21,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/mitchellh/mapstructure"
 	. "github.com/smartystreets/goconvey/convey"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -28,7 +29,8 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	ctrl := gomock.NewController(t)
 	mockThreadApp := mock_ports.NewMockThreadApp(ctrl)
-	handler := handler.NewThreadHandler(mockThreadApp)
+	mockLogger := zap.NewNop()
+	handler := handler.NewThreadHandler(mockThreadApp, mockLogger)
 	defer ctrl.Finish()
 
 	var authClaims entity.UserAuthClaims
@@ -41,7 +43,7 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 	router := gin.New()
 	jwtToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUxMzQ4NzcsInN1YiI6IlVzZXIiLCJVc2VySUQiOjF9.tPfCaNFUG-X8lu5ABtNot3sy_7FEV90PNeTtToA0adOkH4PU_hAXCbiP7BRzTpAWL-gPNaD67DrkrVdaCnFahw"
 	authHeader := fmt.Sprintf("Bearer %v", jwtToken)
-	jwtMiddelware := middleware.NewJwtMiddleware()
+	jwtMiddelware := middleware.NewJwtMiddleware(mockLogger)
 	testUrl := "/threads/post"
 	router.POST(testUrl, jwtMiddelware.Auth(), handler.CreatePost)
 
@@ -90,7 +92,7 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadApp.EXPECT().CreatePost(postRequest, userId).Return(nil),
+			mockThreadApp.EXPECT().CreatePost(gomock.Any(), postRequest, userId).Return(nil),
 		)
 
 		jsons, _ := json.Marshal(postRequest)
@@ -115,7 +117,7 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadApp.EXPECT().CreatePost(postRequest, userId).Return(&entity.DbConnectErr),
+			mockThreadApp.EXPECT().CreatePost(gomock.Any(), postRequest, userId).Return(&entity.DbConnectErr),
 		)
 
 		jsons, _ := json.Marshal(postRequest)
@@ -138,7 +140,8 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	ctrl := gomock.NewController(t)
 	mockThreadApp := mock_ports.NewMockThreadApp(ctrl)
-	handler := handler.NewThreadHandler(mockThreadApp)
+	mockLogger := zap.NewNop()
+	handler := handler.NewThreadHandler(mockThreadApp, mockLogger)
 	defer ctrl.Finish()
 
 	var authClaims entity.UserAuthClaims
@@ -151,7 +154,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 	router := gin.New()
 	jwtToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUxMzQ4NzcsInN1YiI6IlVzZXIiLCJVc2VySUQiOjF9.tPfCaNFUG-X8lu5ABtNot3sy_7FEV90PNeTtToA0adOkH4PU_hAXCbiP7BRzTpAWL-gPNaD67DrkrVdaCnFahw"
 	authHeader := fmt.Sprintf("Bearer %v", jwtToken)
-	jwtMiddelware := middleware.NewJwtMiddleware()
+	jwtMiddelware := middleware.NewJwtMiddleware(mockLogger)
 
 	router.GET("/threads/post", jwtMiddelware.Auth(), handler.GetPost)
 
@@ -211,7 +214,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockThreadApp.EXPECT().GetPost(&pageParams, getPostRequest).Return(getPostContent, nil),
+				mockThreadApp.EXPECT().GetPost(gomock.Any(), &pageParams, getPostRequest).Return(getPostContent, nil),
 			)
 
 			req := httptest.NewRequest(http.MethodGet, testUrl, nil)
@@ -263,7 +266,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockThreadApp.EXPECT().GetPost(&pageParams, getPostRequest).Return(getPostContent, nil),
+				mockThreadApp.EXPECT().GetPost(gomock.Any(), &pageParams, getPostRequest).Return(getPostContent, nil),
 			)
 
 			req := httptest.NewRequest(http.MethodGet, testUrl, nil)
@@ -318,7 +321,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadApp.EXPECT().GetPost(&pageParams, getPostRequest).Return(getPostContent, &entity.DbConnectErr),
+			mockThreadApp.EXPECT().GetPost(gomock.Any(), &pageParams, getPostRequest).Return(getPostContent, &entity.DbConnectErr),
 		)
 
 		req := httptest.NewRequest(http.MethodGet, testUrl, nil)

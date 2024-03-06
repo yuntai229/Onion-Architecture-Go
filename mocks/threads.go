@@ -36,32 +36,32 @@ func (m *MockThreadRepo) EXPECT() *MockThreadRepoMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockThreadRepo) Create(threadData entity.Threads) *entity.ErrorMessage {
+func (m *MockThreadRepo) Create(requestId string, threadData entity.Threads) *entity.ErrorMessage {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", threadData)
+	ret := m.ctrl.Call(m, "Create", requestId, threadData)
 	ret0, _ := ret[0].(*entity.ErrorMessage)
 	return ret0
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockThreadRepoMockRecorder) Create(threadData interface{}) *gomock.Call {
+func (mr *MockThreadRepoMockRecorder) Create(requestId, threadData interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockThreadRepo)(nil).Create), threadData)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockThreadRepo)(nil).Create), requestId, threadData)
 }
 
 // GetByUserId mocks base method.
-func (m *MockThreadRepo) GetByUserId(pagination *entity.Pagination, userId uint) ([]entity.Threads, *entity.ErrorMessage) {
+func (m *MockThreadRepo) GetByUserId(requestId string, pagination *entity.Pagination, userId uint) ([]entity.Threads, *entity.ErrorMessage) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByUserId", pagination, userId)
+	ret := m.ctrl.Call(m, "GetByUserId", requestId, pagination, userId)
 	ret0, _ := ret[0].([]entity.Threads)
 	ret1, _ := ret[1].(*entity.ErrorMessage)
 	return ret0, ret1
 }
 
 // GetByUserId indicates an expected call of GetByUserId.
-func (mr *MockThreadRepoMockRecorder) GetByUserId(pagination, userId interface{}) *gomock.Call {
+func (mr *MockThreadRepoMockRecorder) GetByUserId(requestId, pagination, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserId", reflect.TypeOf((*MockThreadRepo)(nil).GetByUserId), pagination, userId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserId", reflect.TypeOf((*MockThreadRepo)(nil).GetByUserId), requestId, pagination, userId)
 }
 
 // MockThreadApp is a mock of ThreadApp interface.
@@ -88,30 +88,30 @@ func (m *MockThreadApp) EXPECT() *MockThreadAppMockRecorder {
 }
 
 // CreatePost mocks base method.
-func (m *MockThreadApp) CreatePost(requestBody dto.PostRequest, userId uint) *entity.ErrorMessage {
+func (m *MockThreadApp) CreatePost(requestId string, requestBody dto.PostRequest, userId uint) *entity.ErrorMessage {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreatePost", requestBody, userId)
+	ret := m.ctrl.Call(m, "CreatePost", requestId, requestBody, userId)
 	ret0, _ := ret[0].(*entity.ErrorMessage)
 	return ret0
 }
 
 // CreatePost indicates an expected call of CreatePost.
-func (mr *MockThreadAppMockRecorder) CreatePost(requestBody, userId interface{}) *gomock.Call {
+func (mr *MockThreadAppMockRecorder) CreatePost(requestId, requestBody, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePost", reflect.TypeOf((*MockThreadApp)(nil).CreatePost), requestBody, userId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePost", reflect.TypeOf((*MockThreadApp)(nil).CreatePost), requestId, requestBody, userId)
 }
 
 // GetPost mocks base method.
-func (m *MockThreadApp) GetPost(pagination *entity.Pagination, params dto.GetPostRequest) ([]entity.Threads, *entity.ErrorMessage) {
+func (m *MockThreadApp) GetPost(requestId string, pagination *entity.Pagination, params dto.GetPostRequest) ([]entity.Threads, *entity.ErrorMessage) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPost", pagination, params)
+	ret := m.ctrl.Call(m, "GetPost", requestId, pagination, params)
 	ret0, _ := ret[0].([]entity.Threads)
 	ret1, _ := ret[1].(*entity.ErrorMessage)
 	return ret0, ret1
 }
 
 // GetPost indicates an expected call of GetPost.
-func (mr *MockThreadAppMockRecorder) GetPost(pagination, params interface{}) *gomock.Call {
+func (mr *MockThreadAppMockRecorder) GetPost(requestId, pagination, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPost", reflect.TypeOf((*MockThreadApp)(nil).GetPost), pagination, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPost", reflect.TypeOf((*MockThreadApp)(nil).GetPost), requestId, pagination, params)
 }

@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"onion-architecrure-go/domain/entity"
 	"onion-architecrure-go/domain/ports"
@@ -8,21 +10,30 @@ import (
 	"onion-architecrure-go/extend"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type ThreadHandler struct {
-	threadApp ports.ThreadApp
+	ThreadApp ports.ThreadApp
+	Logger    *zap.Logger
 }
 
-func NewThreadHandler(threadApp ports.ThreadApp) *ThreadHandler {
-	return &ThreadHandler{threadApp}
+func NewThreadHandler(threadApp ports.ThreadApp, logger *zap.Logger) *ThreadHandler {
+	return &ThreadHandler{threadApp, logger}
 }
 
 func (handler *ThreadHandler) CreatePost(ctx *gin.Context) {
+	requestId := fmt.Sprintf("%v", ctx.Value("requestId"))
 	var requestBody dto.PostRequest
+
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
 		newErr := entity.MissingFieldErr
 		res := entity.Response.ResWithFail(newErr)
+		handler.Logger.Info("[ApiHandler][ThreadHandler][CreatePost] Request end - ShouldBindJSON Error",
+			zap.String("requestId", requestId),
+			zap.Any("res", res),
+			zap.Error(err),
+		)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
@@ -31,25 +42,44 @@ func (handler *ThreadHandler) CreatePost(ctx *gin.Context) {
 	if !ok {
 		newErr := entity.TokenInvalidErr
 		res := entity.Response.ResWithFail(newErr)
+		handler.Logger.Error("[ApiHandler][ThreadHandler][CreatePost] Request end - Jwt Error",
+			zap.String("requestId", requestId),
+			zap.Any("res", res),
+			zap.Error(errors.New("Can not parse user id from jwt token")),
+		)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
 
-	if err := handler.threadApp.CreatePost(requestBody, userId.(uint)); err != nil {
+	if err := handler.ThreadApp.CreatePost(requestId, requestBody, userId.(uint)); err != nil {
 		newErr := *err
 		res := entity.Response.ResWithFail(newErr)
+		handler.Logger.Info("[ApiHandler][ThreadHandler][CreatePost] Request end - Fail",
+			zap.String("requestId", requestId),
+			zap.Any("res", res),
+		)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
 	res := entity.Response.ResWithSucc(nil)
+	handler.Logger.Info("[ApiHandler][ThreadHandler][CreatePost] Request end - Succ",
+		zap.String("requestId", requestId), zap.Any("res", res),
+	)
 	ctx.JSON(http.StatusOK, res)
 }
 
 func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
+	requestId := fmt.Sprintf("%v", ctx.Value("requestId"))
 	var params dto.GetPostRequest
+
 	if err := ctx.ShouldBind(&params); err != nil {
 		newErr := entity.MissingFieldErr
 		res := entity.Response.ResWithFail(newErr)
+		handler.Logger.Error("[ApiHandler][ThreadHandler][GetPost] Request end - ShouldBindJSON Error",
+			zap.String("requestId", requestId),
+			zap.Any("res", res),
+			zap.Error(errors.New("Can not parse user id from jwt token")),
+		)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
@@ -58,6 +88,11 @@ func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 	if !ok {
 		newErr := entity.TokenInvalidErr
 		res := entity.Response.ResWithFail(newErr)
+		handler.Logger.Error("[ApiHandler][ThreadHandler][GetPost] Request end - Jwt Error",
+			zap.String("requestId", requestId),
+			zap.Any("res", res),
+			zap.Error(errors.New("Can not parse user id from jwt token")),
+		)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
@@ -66,10 +101,14 @@ func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 		params.UserId = userId.(uint)
 	}
 
-	threadData, err := handler.threadApp.GetPost(&params.Pagination, params)
+	threadData, err := handler.ThreadApp.GetPost(requestId, &params.Pagination, params)
 	if err != nil {
 		newErr := *err
 		res := entity.Response.ResWithFail(newErr)
+		handler.Logger.Info("[ApiHandler][ThreadHandler][GetPost] Request end - Fail",
+			zap.String("requestId", requestId),
+			zap.Any("res", res),
+		)
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
@@ -86,5 +125,8 @@ func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 	}
 
 	res := entity.Response.ResWithSucc(params.Pagination.Format(resData))
+	handler.Logger.Info("[ApiHandler][ThreadHandler][CreatePost] Request end - Succ",
+		zap.String("requestId", requestId), zap.Any("res", res),
+	)
 	ctx.JSON(http.StatusOK, res)
 }

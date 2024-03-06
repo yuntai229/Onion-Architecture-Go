@@ -10,42 +10,46 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
 func TestThreadApp_CreatePost(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockThreadRepo := mock_ports.NewMockThreadRepo(ctrl)
+	mockLogger := zap.NewNop()
+
+	requestId := "test-request-id"
 	var userId uint = 1
 	threadData := entity.Threads{
 		UserId:  userId,
 		Content: "test",
 	}
-	app := app.NewThreadApp(mockThreadRepo)
+	app := app.NewThreadApp(mockThreadRepo, mockLogger)
 
 	defer ctrl.Finish()
 	Convey("新增貼文成功", t, func() {
 		gomock.InOrder(
-			mockThreadRepo.EXPECT().Create(threadData).Return(nil),
+			mockThreadRepo.EXPECT().Create(gomock.Any(), threadData).Return(nil),
 		)
 		requestData := dto.PostRequest{
 			Content: "test",
 		}
 
-		err := app.CreatePost(requestData, userId)
+		err := app.CreatePost(requestId, requestData, userId)
 		So(err, ShouldBeNil)
 	})
 
 	Convey("Db Connect Error", t, func() {
 		gomock.InOrder(
-			mockThreadRepo.EXPECT().Create(threadData).Return(&entity.DbConnectErr),
+			mockThreadRepo.EXPECT().Create(gomock.Any(), threadData).Return(&entity.DbConnectErr),
 		)
 		requestData := dto.PostRequest{
 			Content: "test",
 		}
 		errData := &entity.DbConnectErr
 
-		err := app.CreatePost(requestData, userId)
+		err := app.CreatePost(requestId, requestData, userId)
 		So(err, ShouldEqual, errData)
 	})
 }
@@ -53,8 +57,10 @@ func TestThreadApp_CreatePost(t *testing.T) {
 func TestThreadApp_GetPost(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockThreadRepo := mock_ports.NewMockThreadRepo(ctrl)
-	app := app.NewThreadApp(mockThreadRepo)
+	mockLogger := zap.NewNop()
+	app := app.NewThreadApp(mockThreadRepo, mockLogger)
 
+	requestId := "test-request-id"
 	dateTime, _ := time.Parse("2006-01-02 15:04:05", "2023-01-01 12:30:30")
 
 	res := []entity.Threads{{
@@ -90,9 +96,9 @@ func TestThreadApp_GetPost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadRepo.EXPECT().GetByUserId(&pageParams, userId).Return(res, nil),
+			mockThreadRepo.EXPECT().GetByUserId(gomock.Any(), &pageParams, userId).Return(res, nil),
 		)
-		data, err := app.GetPost(&pageParams, requestData)
+		data, err := app.GetPost(requestId, &pageParams, requestData)
 		So(err, ShouldBeNil)
 		So(data, ShouldEqual, res)
 	})
@@ -111,9 +117,9 @@ func TestThreadApp_GetPost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadRepo.EXPECT().GetByUserId(&pageParams, userId).Return(res, &entity.DbConnectErr),
+			mockThreadRepo.EXPECT().GetByUserId(gomock.Any(), &pageParams, userId).Return(res, &entity.DbConnectErr),
 		)
-		_, err := app.GetPost(&pageParams, requestData)
+		_, err := app.GetPost(requestId, &pageParams, requestData)
 		errData := &entity.DbConnectErr
 		So(err, ShouldEqual, errData)
 	})

@@ -6,11 +6,11 @@ import (
 )
 
 type ThreadRepo interface {
-	Create(threadData entity.Threads) *entity.ErrorMessage
-	GetByUserId(pagination *entity.Pagination, userId uint) ([]entity.Threads, *entity.ErrorMessage)
+	Create(requestId string, threadData entity.Threads) *entity.ErrorMessage
+	GetByUserId(requestId string, pagination *entity.Pagination, userId uint) ([]entity.Threads, *entity.ErrorMessage)
 }
 
 type ThreadApp interface {
-	CreatePost(requestBody dto.PostRequest, userId uint) *entity.ErrorMessage
-	GetPost(pagination *entity.Pagination, params dto.GetPostRequest) ([]entity.Threads, *entity.ErrorMessage)
+	CreatePost(requestId string, requestBody dto.PostRequest, userId uint) *entity.ErrorMessage
+	GetPost(requestId string, pagination *entity.Pagination, params dto.GetPostRequest) ([]entity.Threads, *entity.ErrorMessage)
 }

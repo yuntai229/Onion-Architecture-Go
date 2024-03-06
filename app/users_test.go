@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"bou.ke/monkey"
+	"go.uber.org/zap"
 
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
@@ -21,10 +22,12 @@ import (
 
 func TestUsersApp_Signup(t *testing.T) {
 	ctrl := gomock.NewController(t)
-
 	mockUserRepo := mock_ports.NewMockUserRepo(ctrl)
-	app := app.NewUserApp(mockUserRepo)
+	mockLogger := zap.NewNop()
+	app := app.NewUserApp(mockUserRepo, mockLogger)
 	defer ctrl.Finish()
+
+	requestId := "test-request-id"
 	userData := entity.Users{
 		Name:         "test",
 		Email:        "test",
@@ -38,18 +41,18 @@ func TestUsersApp_Signup(t *testing.T) {
 	Convey("註冊", t, func() {
 		Convey("成功", func() {
 			gomock.InOrder(
-				mockUserRepo.EXPECT().Create(userData).Return(nil),
+				mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(nil),
 			)
 
-			err := app.Signup(requestData)
+			err := app.Signup(requestId, requestData)
 			So(err, ShouldBeNil)
 		})
 
 		Convey("失敗 - 帳號已存在", func() {
 			gomock.InOrder(
-				mockUserRepo.EXPECT().Create(userData).Return(&entity.UserExistErr),
+				mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&entity.UserExistErr),
 			)
-			err := app.Signup(requestData)
+			err := app.Signup(requestId, requestData)
 			errData := &entity.UserExistErr
 			So(err, ShouldEqual, errData)
 		})
@@ -57,9 +60,9 @@ func TestUsersApp_Signup(t *testing.T) {
 
 	Convey("Db Connect Error", t, func() {
 		gomock.InOrder(
-			mockUserRepo.EXPECT().Create(userData).Return(&entity.DbConnectErr),
+			mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&entity.DbConnectErr),
 		)
-		err := app.Signup(requestData)
+		err := app.Signup(requestId, requestData)
 		errData := &entity.DbConnectErr
 		So(err, ShouldEqual, errData)
 	})
@@ -68,7 +71,9 @@ func TestUsersApp_Signup(t *testing.T) {
 func TestUsersApp_Login(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockUserRepo := mock_ports.NewMockUserRepo(ctrl)
-	app := app.NewUserApp(mockUserRepo)
+	mockLogger := zap.NewNop()
+	app := app.NewUserApp(mockUserRepo, mockLogger)
+	requestId := "test-request-id"
 	jwtToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUxMzQ4NzcsInN1YiI6IlVzZXIiLCJVc2VySUQiOjF9.tPfCaNFUG-X8lu5ABtNot3sy_7FEV90PNeTtToA0adOkH4PU_hAXCbiP7BRzTpAWL-gPNaD67DrkrVdaCnFahw"
 	dateTime, _ := time.Parse("2006-01-02 15:04:05", "2023-01-01 12:30:30")
 	correctPwd := "fiiewl"
@@ -103,9 +108,9 @@ func TestUsersApp_Login(t *testing.T) {
 				Password: correctPwd,
 			}
 			gomock.InOrder(
-				mockUserRepo.EXPECT().GetByMail("1").Return(user, nil),
+				mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, nil),
 			)
-			token, err := app.Login(requestBody)
+			token, err := app.Login(requestId, requestBody)
 			So(err, ShouldBeNil)
 			So(token, ShouldEqual, jwtToken)
 		})
@@ -126,9 +131,9 @@ func TestUsersApp_Login(t *testing.T) {
 				HashPassword: "1e1543e12484ce0db6275fe1d2948ef2",
 			}
 			gomock.InOrder(
-				mockUserRepo.EXPECT().GetByMail("1").Return(user, nil),
+				mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, nil),
 			)
-			token, err := app.Login(requestBody)
+			token, err := app.Login(requestId, requestBody)
 			So(token, ShouldEqual, "")
 			So(err, ShouldEqual, &entity.PasswordIncorrectErr)
 		})
@@ -142,9 +147,9 @@ func TestUsersApp_Login(t *testing.T) {
 		}
 		var user entity.Users
 		gomock.InOrder(
-			mockUserRepo.EXPECT().GetByMail("1").Return(user, &entity.UserNotFoundErr),
+			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &entity.UserNotFoundErr),
 		)
-		token, err := app.Login(requestBody)
+		token, err := app.Login(requestId, requestBody)
 		So(token, ShouldEqual, "")
 		So(err, ShouldEqual, &entity.UserNotFoundErr)
 	})
@@ -155,7 +160,7 @@ func TestUsersApp_Login(t *testing.T) {
 			Password: correctPwd,
 		}
 		gomock.InOrder(
-			mockUserRepo.EXPECT().GetByMail("1").Return(user, nil),
+			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, nil),
 		)
 		defer monkey.UnpatchAll()
 		var authClaims = entity.UserAuthClaims{
@@ -165,7 +170,7 @@ func TestUsersApp_Login(t *testing.T) {
 		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "GenJwt", func(_ *entity.UserAuthClaims) (string, error) {
 			return "", errors.New("error")
 		})
-		token, err := app.Login(requestBody)
+		token, err := app.Login(requestId, requestBody)
 		So(token, ShouldEqual, "")
 		So(err, ShouldEqual, &entity.TokenGenFail)
 	})
@@ -177,10 +182,10 @@ func TestUsersApp_Login(t *testing.T) {
 		}
 		user = entity.Users{}
 		gomock.InOrder(
-			mockUserRepo.EXPECT().GetByMail("1").Return(user, &entity.DbConnectErr),
+			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &entity.DbConnectErr),
 		)
 		errData := &entity.DbConnectErr
-		token, err := app.Login(requestBody)
+		token, err := app.Login(requestId, requestBody)
 		So(token, ShouldEqual, "")
 		So(err, ShouldEqual, errData)
 	})

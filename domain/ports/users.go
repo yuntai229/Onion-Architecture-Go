@@ -6,11 +6,11 @@ import (
 )
 
 type UserApp interface {
-	Signup(requestBody dto.SignupRequest) *entity.ErrorMessage
-	Login(requestBody dto.LoginRequest) (string, *entity.ErrorMessage)
+	Signup(requestId string, requestBody dto.SignupRequest) *entity.ErrorMessage
+	Login(requestId string, requestBody dto.LoginRequest) (string, *entity.ErrorMessage)
 }
 
 type UserRepo interface {
-	Create(userData entity.Users) *entity.ErrorMessage
-	GetByMail(mail string) (entity.Users, *entity.ErrorMessage)
+	Create(requestId string, userData entity.Users) *entity.ErrorMessage
+	GetByMail(requestId string, mail string) (entity.Users, *entity.ErrorMessage)
 }

@@ -5,9 +5,10 @@ import (
 	"onion-architecrure-go/presentation/api/middleware"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
-func InitRouter(handlers ...any) *gin.Engine {
+func InitRouter(handlers []any, middlewares []any, logger *zap.Logger) *gin.Engine {
 	router := gin.Default()
 
 	var homeHandler *handler.HomeHandler
@@ -24,7 +25,18 @@ func InitRouter(handlers ...any) *gin.Engine {
 		}
 	}
 
-	jwtMiddelware := middleware.NewJwtMiddleware()
+	var jwtMiddelware *middleware.JwtAuthMiddleware
+	var logTraceMiddleware *middleware.LogTraceMiddleware
+	for _, item := range middlewares {
+		switch middleware := item.(type) {
+		case *middleware.JwtAuthMiddleware:
+			jwtMiddelware = middleware
+		case *middleware.LogTraceMiddleware:
+			logTraceMiddleware = middleware
+		}
+	}
+
+	router.Use(logTraceMiddleware.InjectRequestId())
 
 	router.GET("/ping", homeHandler.Ping)
 	router.POST("/users/signup", userHandler.Signup)

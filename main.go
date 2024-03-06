@@ -2,20 +2,18 @@ package main
 
 import (
 	"net/http"
-	"onion-architecrure-go/app"
 	cmd "onion-architecrure-go/cmd"
-	"onion-architecrure-go/infrastructure/rdb"
 	"time"
 )
 
 func main() {
-
 	db := cmd.InitDb()
-	handlers := cmd.InitApp(db)
+	logger := cmd.InitLog()
+	handlers, middlewares := cmd.InitApp(db, logger)
 
 	server := &http.Server{
 		Addr:         ":8080",
-		Handler:      cmd.InitRouter(handlers),
+		Handler:      cmd.InitRouter(handlers, middlewares, logger),
 		ReadTimeout:  60 * time.Second,
 		WriteTimeout: 60 * time.Second,
 	}

@@ -14,18 +14,23 @@ import (
 	"bou.ke/monkey"
 	"github.com/gin-gonic/gin"
 	. "github.com/smartystreets/goconvey/convey"
+	"go.uber.org/zap"
 )
 
 func TestJwtAuthMiddleware_Auth(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-	middlewareStub := &middleware.JwtAuthMiddleware{}
+	mockLogger := zap.NewNop()
+
+	jwtMiddelware := middleware.NewJwtMiddleware(mockLogger)
+	logTraceMiddleware := middleware.NewLogTraceMiddleware(mockLogger)
+	router.Use(logTraceMiddleware.InjectRequestId())
 
 	jwtToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUxMzQ4NzcsInN1YiI6IlVzZXIiLCJVc2VySUQiOjF9.tPfCaNFUG-X8lu5ABtNot3sy_7FEV90PNeTtToA0adOkH4PU_hAXCbiP7BRzTpAWL-gPNaD67DrkrVdaCnFahw"
 	authHeader := fmt.Sprintf("Bearer %v", jwtToken)
 	Convey("驗證成功", t, func() {
 		var ctxUserId any
-		router.GET("/jwt/success", middlewareStub.Auth(), func(ctx *gin.Context) {
+		router.GET("/jwt/success", jwtMiddelware.Auth(), func(ctx *gin.Context) {
 			res := entity.Response.ResWithSucc(nil)
 			userId, _ := ctx.Get("UserId")
 			ctxUserId = userId
@@ -56,7 +61,7 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 
 	Convey("驗證失敗", t, func() {
 		Convey("沒有 token", func() {
-			router.GET("/jwt/missingToken", middlewareStub.Auth(), func(ctx *gin.Context) {
+			router.GET("/jwt/missingToken", jwtMiddelware.Auth(), func(ctx *gin.Context) {
 				newErr := entity.MissingTokenErr
 				res := entity.Response.ResWithFail(newErr)
 				ctx.JSON(newErr.HttpCode, res)
@@ -75,7 +80,7 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 			So(resultResBody.Message, ShouldEqual, entity.MissingTokenErr.Message)
 		})
 		Convey("無效 token", func() {
-			router.GET("/jwt/invalidToken", middlewareStub.Auth(), func(ctx *gin.Context) {
+			router.GET("/jwt/invalidToken", jwtMiddelware.Auth(), func(ctx *gin.Context) {
 				newErr := entity.TokenInvalidErr
 				res := entity.Response.ResWithFail(newErr)
 				ctx.JSON(newErr.HttpCode, res)

@@ -36,32 +36,32 @@ func (m *MockUserApp) EXPECT() *MockUserAppMockRecorder {
 }
 
 // Login mocks base method.
-func (m *MockUserApp) Login(requestBody dto.LoginRequest) (string, *entity.ErrorMessage) {
+func (m *MockUserApp) Login(requestId string, requestBody dto.LoginRequest) (string, *entity.ErrorMessage) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Login", requestBody)
+	ret := m.ctrl.Call(m, "Login", requestId, requestBody)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(*entity.ErrorMessage)
 	return ret0, ret1
 }
 
 // Login indicates an expected call of Login.
-func (mr *MockUserAppMockRecorder) Login(requestBody interface{}) *gomock.Call {
+func (mr *MockUserAppMockRecorder) Login(requestId, requestBody interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockUserApp)(nil).Login), requestBody)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockUserApp)(nil).Login), requestId, requestBody)
 }
 
 // Signup mocks base method.
-func (m *MockUserApp) Signup(requestBody dto.SignupRequest) *entity.ErrorMessage {
+func (m *MockUserApp) Signup(requestId string, requestBody dto.SignupRequest) *entity.ErrorMessage {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Signup", requestBody)
+	ret := m.ctrl.Call(m, "Signup", requestId, requestBody)
 	ret0, _ := ret[0].(*entity.ErrorMessage)
 	return ret0
 }
 
 // Signup indicates an expected call of Signup.
-func (mr *MockUserAppMockRecorder) Signup(requestBody interface{}) *gomock.Call {
+func (mr *MockUserAppMockRecorder) Signup(requestId, requestBody interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Signup", reflect.TypeOf((*MockUserApp)(nil).Signup), requestBody)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Signup", reflect.TypeOf((*MockUserApp)(nil).Signup), requestId, requestBody)
 }
 
 // MockUserRepo is a mock of UserRepo interface.
@@ -88,30 +88,30 @@ func (m *MockUserRepo) EXPECT() *MockUserRepoMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserRepo) Create(userData entity.Users) *entity.ErrorMessage {
+func (m *MockUserRepo) Create(requestId string, userData entity.Users) *entity.ErrorMessage {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", userData)
+	ret := m.ctrl.Call(m, "Create", requestId, userData)
 	ret0, _ := ret[0].(*entity.ErrorMessage)
 	return ret0
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserRepoMockRecorder) Create(userData interface{}) *gomock.Call {
+func (mr *MockUserRepoMockRecorder) Create(requestId, userData interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepo)(nil).Create), userData)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepo)(nil).Create), requestId, userData)
 }
 
 // GetByMail mocks base method.
-func (m *MockUserRepo) GetByMail(mail string) (entity.Users, *entity.ErrorMessage) {
+func (m *MockUserRepo) GetByMail(requestId, mail string) (entity.Users, *entity.ErrorMessage) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByMail", mail)
+	ret := m.ctrl.Call(m, "GetByMail", requestId, mail)
 	ret0, _ := ret[0].(entity.Users)
 	ret1, _ := ret[1].(*entity.ErrorMessage)
 	return ret0, ret1
 }
 
 // GetByMail indicates an expected call of GetByMail.
-func (mr *MockUserRepoMockRecorder) GetByMail(mail interface{}) *gomock.Call {
+func (mr *MockUserRepoMockRecorder) GetByMail(requestId, mail interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByMail", reflect.TypeOf((*MockUserRepo)(nil).GetByMail), mail)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByMail", reflect.TypeOf((*MockUserRepo)(nil).GetByMail), requestId, mail)
 }
