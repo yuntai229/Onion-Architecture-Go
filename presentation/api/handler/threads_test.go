@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"onion-architecrure-go/cmd"
 	"onion-architecrure-go/domain/entity"
 	"onion-architecrure-go/dto"
 	mock_ports "onion-architecrure-go/mocks"
@@ -30,11 +31,12 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockThreadApp := mock_ports.NewMockThreadApp(ctrl)
 	mockLogger := zap.NewNop()
+	config := cmd.InitAppEnv()
 	handler := handler.NewThreadHandler(mockThreadApp, mockLogger)
 	defer ctrl.Finish()
 
 	var authClaims entity.UserAuthClaims
-	monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, tokenString string) (bool, *entity.UserAuthClaims) {
+	monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, key, tokenString string) (bool, *entity.UserAuthClaims) {
 		e.UserID = 1
 		return true, e
 	})
@@ -43,7 +45,7 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 	router := gin.New()
 	jwtToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUxMzQ4NzcsInN1YiI6IlVzZXIiLCJVc2VySUQiOjF9.tPfCaNFUG-X8lu5ABtNot3sy_7FEV90PNeTtToA0adOkH4PU_hAXCbiP7BRzTpAWL-gPNaD67DrkrVdaCnFahw"
 	authHeader := fmt.Sprintf("Bearer %v", jwtToken)
-	jwtMiddelware := middleware.NewJwtMiddleware(mockLogger)
+	jwtMiddelware := middleware.NewJwtMiddleware(config, mockLogger)
 	testUrl := "/threads/post"
 	router.POST(testUrl, jwtMiddelware.Auth(), handler.CreatePost)
 
@@ -141,11 +143,12 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockThreadApp := mock_ports.NewMockThreadApp(ctrl)
 	mockLogger := zap.NewNop()
+	config := cmd.InitAppEnv()
 	handler := handler.NewThreadHandler(mockThreadApp, mockLogger)
 	defer ctrl.Finish()
 
 	var authClaims entity.UserAuthClaims
-	monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, tokenString string) (bool, *entity.UserAuthClaims) {
+	monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, key, tokenString string) (bool, *entity.UserAuthClaims) {
 		e.UserID = 1
 		return true, e
 	})
@@ -154,7 +157,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 	router := gin.New()
 	jwtToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUxMzQ4NzcsInN1YiI6IlVzZXIiLCJVc2VySUQiOjF9.tPfCaNFUG-X8lu5ABtNot3sy_7FEV90PNeTtToA0adOkH4PU_hAXCbiP7BRzTpAWL-gPNaD67DrkrVdaCnFahw"
 	authHeader := fmt.Sprintf("Bearer %v", jwtToken)
-	jwtMiddelware := middleware.NewJwtMiddleware(mockLogger)
+	jwtMiddelware := middleware.NewJwtMiddleware(config, mockLogger)
 
 	router.GET("/threads/post", jwtMiddelware.Auth(), handler.GetPost)
 

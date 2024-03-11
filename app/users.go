@@ -10,12 +10,13 @@ import (
 )
 
 type UserApp struct {
+	config   *entity.Config
 	UserRepo ports.UserRepo
 	Logger   *zap.Logger
 }
 
-func NewUserApp(userRepo ports.UserRepo, logger *zap.Logger) ports.UserApp {
-	return &UserApp{userRepo, logger}
+func NewUserApp(config *entity.Config, userRepo ports.UserRepo, logger *zap.Logger) ports.UserApp {
+	return &UserApp{config, userRepo, logger}
 }
 
 func (app *UserApp) Signup(requestId string, requestBody dto.SignupRequest) *entity.ErrorMessage {
@@ -52,7 +53,7 @@ func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (strin
 	var authClaims = entity.UserAuthClaims{
 		UserID: userData.ID,
 	}
-	jwt, jwtErr := authClaims.GenJwt()
+	jwt, jwtErr := authClaims.GenJwt(app.config.JwtConfig.Key)
 	if jwtErr != nil {
 		app.Logger.Error("[App][UserApp][Login] Token gen error",
 			zap.String("requestId", requestId),

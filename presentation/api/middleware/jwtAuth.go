@@ -10,11 +10,12 @@ import (
 )
 
 type JwtAuthMiddleware struct {
+	Config *entity.Config
 	Logger *zap.Logger
 }
 
-func NewJwtMiddleware(logger *zap.Logger) *JwtAuthMiddleware {
-	return &JwtAuthMiddleware{logger}
+func NewJwtMiddleware(config *entity.Config, logger *zap.Logger) *JwtAuthMiddleware {
+	return &JwtAuthMiddleware{config, logger}
 }
 
 func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
@@ -41,7 +42,7 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 		)
 
 		var authClaims entity.UserAuthClaims
-		isValid, claims := authClaims.VerifyJwt(tokenString)
+		isValid, claims := authClaims.VerifyJwt(middleware.Config.JwtConfig.Key, tokenString)
 		if !isValid {
 			newErr := entity.TokenInvalidErr
 			res := entity.Response.ResWithFail(newErr)

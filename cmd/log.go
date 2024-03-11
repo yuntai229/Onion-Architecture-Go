@@ -24,7 +24,7 @@ func InitLog() *zap.Logger {
 		}, nil
 	})
 
-	config := zap.NewProductionConfig()
+	config := InitLoggerEnv()
 
 	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(time.RFC3339)
 	config.EncoderConfig.StacktraceKey = ""

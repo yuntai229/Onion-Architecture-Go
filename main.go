@@ -7,9 +7,10 @@ import (
 )
 
 func main() {
-	db := cmd.InitDb()
+	config := cmd.InitAppEnv()
+	db := cmd.InitDb(config)
 	logger := cmd.InitLog()
-	handlers, middlewares := cmd.InitApp(db, logger)
+	handlers, middlewares := cmd.InitApp(config, db, logger)
 
 	server := &http.Server{
 		Addr:         ":8080",

@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"onion-architecrure-go/cmd"
 	"onion-architecrure-go/domain/entity"
 	"onion-architecrure-go/presentation/api/middleware"
 	"reflect"
@@ -21,8 +22,9 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
 	mockLogger := zap.NewNop()
+	config := cmd.InitAppEnv()
 
-	jwtMiddelware := middleware.NewJwtMiddleware(mockLogger)
+	jwtMiddelware := middleware.NewJwtMiddleware(config, mockLogger)
 	logTraceMiddleware := middleware.NewLogTraceMiddleware(mockLogger)
 	router.Use(logTraceMiddleware.InjectRequestId())
 
@@ -37,7 +39,7 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 			ctx.JSON(http.StatusOK, res)
 		})
 		var authClaims entity.UserAuthClaims
-		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, tokenString string) (bool, *entity.UserAuthClaims) {
+		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, key, tokenString string) (bool, *entity.UserAuthClaims) {
 			e.UserID = 999
 			return true, e
 		})
@@ -87,7 +89,7 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 			})
 
 			var authClaims entity.UserAuthClaims
-			monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, tokenString string) (bool, *entity.UserAuthClaims) {
+			monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, key, tokenString string) (bool, *entity.UserAuthClaims) {
 				return false, nil
 			})
 			defer monkey.UnpatchAll()

@@ -3,6 +3,7 @@ package app_test
 import (
 	"errors"
 	"onion-architecrure-go/app"
+	"onion-architecrure-go/cmd"
 	"onion-architecrure-go/domain/entity"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
@@ -24,7 +25,8 @@ func TestUsersApp_Signup(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockUserRepo := mock_ports.NewMockUserRepo(ctrl)
 	mockLogger := zap.NewNop()
-	app := app.NewUserApp(mockUserRepo, mockLogger)
+	config := cmd.InitAppEnv()
+	app := app.NewUserApp(config, mockUserRepo, mockLogger)
 	defer ctrl.Finish()
 
 	requestId := "test-request-id"
@@ -72,7 +74,8 @@ func TestUsersApp_Login(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockUserRepo := mock_ports.NewMockUserRepo(ctrl)
 	mockLogger := zap.NewNop()
-	app := app.NewUserApp(mockUserRepo, mockLogger)
+	config := cmd.InitAppEnv()
+	app := app.NewUserApp(config, mockUserRepo, mockLogger)
 	requestId := "test-request-id"
 	jwtToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUxMzQ4NzcsInN1YiI6IlVzZXIiLCJVc2VySUQiOjF9.tPfCaNFUG-X8lu5ABtNot3sy_7FEV90PNeTtToA0adOkH4PU_hAXCbiP7BRzTpAWL-gPNaD67DrkrVdaCnFahw"
 	dateTime, _ := time.Parse("2006-01-02 15:04:05", "2023-01-01 12:30:30")
@@ -97,7 +100,7 @@ func TestUsersApp_Login(t *testing.T) {
 			UserID: 1,
 		}
 
-		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "GenJwt", func(_ *entity.UserAuthClaims) (string, error) {
+		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "GenJwt", func(_ *entity.UserAuthClaims, key string) (string, error) {
 			return jwtToken, nil
 		})
 
@@ -167,7 +170,7 @@ func TestUsersApp_Login(t *testing.T) {
 			UserID: 1,
 		}
 
-		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "GenJwt", func(_ *entity.UserAuthClaims) (string, error) {
+		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "GenJwt", func(_ *entity.UserAuthClaims, key string) (string, error) {
 			return "", errors.New("error")
 		})
 		token, err := app.Login(requestId, requestBody)

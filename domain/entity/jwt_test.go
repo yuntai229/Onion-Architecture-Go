@@ -3,6 +3,7 @@ package entity_test
 import (
 	"encoding/json"
 	"errors"
+	"onion-architecrure-go/cmd"
 	"onion-architecrure-go/domain/entity"
 	"reflect"
 	"testing"
@@ -13,6 +14,7 @@ import (
 )
 
 func TestJwtEntity_VerifyJwt(t *testing.T) {
+	config := cmd.InitAppEnv()
 	var authClaims entity.UserAuthClaims
 	jwtToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUxMzQ4NzcsInN1YiI6IlVzZXIiLCJVc2VySUQiOjF9.tPfCaNFUG-X8lu5ABtNot3sy_7FEV90PNeTtToA0adOkH4PU_hAXCbiP7BRzTpAWL-gPNaD67DrkrVdaCnFahw"
 	Convey("token 驗證成功", t, func() {
@@ -25,26 +27,28 @@ func TestJwtEntity_VerifyJwt(t *testing.T) {
 		})
 		defer monkey.UnpatchAll()
 
-		isValid, _ := authClaims.VerifyJwt(jwtToken)
+		isValid, _ := authClaims.VerifyJwt(config.JwtConfig.Key, jwtToken)
 		So(isValid, ShouldBeTrue)
 	})
 	Convey("token 驗證失敗", t, func() {
+		testErrString := "err str"
 		Convey("token 失效", func() {
-			isValid, _ := authClaims.VerifyJwt(jwtToken)
+			isValid, _ := authClaims.VerifyJwt(config.JwtConfig.Key, testErrString)
 			So(isValid, ShouldBeFalse)
 		})
 		Convey("token 無效 (verify 錯誤)", func() {
-			isValid, _ := authClaims.VerifyJwt("test")
+			isValid, _ := authClaims.VerifyJwt(config.JwtConfig.Key, testErrString)
 			So(isValid, ShouldBeFalse)
 		})
 	})
 }
 
 func TestJwtEntity_GenJwt(t *testing.T) {
+	config := cmd.InitAppEnv()
 	Convey("token 生成成功", t, func() {
 		var authClaims entity.UserAuthClaims
-		token, _ := authClaims.GenJwt()
-		isValid, _ := authClaims.VerifyJwt(token)
+		token, _ := authClaims.GenJwt(config.JwtConfig.Key)
+		isValid, _ := authClaims.VerifyJwt(config.JwtConfig.Key, token)
 		So(isValid, ShouldBeTrue)
 	})
 	Convey("token 生成失敗", t, func() {
@@ -54,7 +58,7 @@ func TestJwtEntity_GenJwt(t *testing.T) {
 			return []byte{}, errors.New(errorString)
 		})
 		defer monkey.UnpatchAll()
-		_, err := authClaims.GenJwt()
+		_, err := authClaims.GenJwt(config.JwtConfig.Key)
 		So(err, ShouldEqual, errorString)
 	})
 }
