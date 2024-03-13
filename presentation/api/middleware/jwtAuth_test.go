@@ -33,7 +33,7 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 	Convey("驗證成功", t, func() {
 		var ctxUserId any
 		router.GET("/jwt/success", jwtMiddelware.Auth(), func(ctx *gin.Context) {
-			res := entity.Response.ResWithSucc(nil)
+			res := entity.NewResEntity().ResWithSucc(nil)
 			userId, _ := ctx.Get("UserId")
 			ctxUserId = userId
 			ctx.JSON(http.StatusOK, res)
@@ -65,7 +65,7 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 		Convey("沒有 token", func() {
 			router.GET("/jwt/missingToken", jwtMiddelware.Auth(), func(ctx *gin.Context) {
 				newErr := entity.MissingTokenErr
-				res := entity.Response.ResWithFail(newErr)
+				res := entity.NewResEntity().ResWithFail(newErr)
 				ctx.JSON(newErr.HttpCode, res)
 			})
 
@@ -84,7 +84,7 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 		Convey("無效 token", func() {
 			router.GET("/jwt/invalidToken", jwtMiddelware.Auth(), func(ctx *gin.Context) {
 				newErr := entity.TokenInvalidErr
-				res := entity.Response.ResWithFail(newErr)
+				res := entity.NewResEntity().ResWithFail(newErr)
 				ctx.JSON(newErr.HttpCode, res)
 			})
 

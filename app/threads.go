@@ -23,10 +23,11 @@ func (app *ThreadApp) CreatePost(requestId string, requestBody dto.PostRequest, 
 		zap.Uint("userId", userId),
 		zap.Any("requestBody", requestBody),
 	)
-	threadData := entity.Threads{
-		UserId:  userId,
-		Content: requestBody.Content,
-	}
+
+	threadData := entity.NewThreadsEntity()
+	threadData.UserId = userId
+	threadData.Content = requestBody.Content
+
 	return app.ThreadRepo.Create(requestId, threadData)
 }
 

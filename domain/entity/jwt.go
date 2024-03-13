@@ -11,6 +11,10 @@ type UserAuthClaims struct {
 	UserID uint
 }
 
+func NewJwtEntity() *UserAuthClaims {
+	return &UserAuthClaims{}
+}
+
 func (entity *UserAuthClaims) VerifyJwt(key, tokenString string) (bool, *UserAuthClaims) {
 	token, err := jwt.ParseWithClaims(tokenString, entity, func(token *jwt.Token) (interface{}, error) {
 		return []byte(key), nil

@@ -24,11 +24,11 @@ func (app *UserApp) Signup(requestId string, requestBody dto.SignupRequest) *ent
 		zap.String("requestId", requestId),
 	)
 
-	userData := entity.Users{
-		Name:         requestBody.Name,
-		Email:        requestBody.Email,
-		HashPassword: extend.Helper.Hash(requestBody.Password),
-	}
+	userData := entity.NewUsersEntity()
+	userData.Name = requestBody.Name
+	userData.Email = requestBody.Email
+	userData.HashPassword = userData.SetHashPassword(requestBody.Password)
+
 	if err := app.UserRepo.Create(requestId, userData); err != nil {
 		return err
 	}
@@ -50,9 +50,8 @@ func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (strin
 		return "", &entity.PasswordIncorrectErr
 	}
 
-	var authClaims = entity.UserAuthClaims{
-		UserID: userData.ID,
-	}
+	authClaims := entity.NewJwtEntity()
+	authClaims.UserID = userData.ID
 	jwt, jwtErr := authClaims.GenJwt(app.config.JwtConfig.Key)
 	if jwtErr != nil {
 		app.Logger.Error("[App][UserApp][Login] Token gen error",

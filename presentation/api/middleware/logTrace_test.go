@@ -26,7 +26,7 @@ func TestJwtAuthMiddleware_InjectRequestId(t *testing.T) {
 
 	Convey("request id 注入", t, func() {
 		router.GET("/requestId", logTraceMiddleware.InjectRequestId(), func(ctx *gin.Context) {
-			res := entity.Response.ResWithSucc(nil)
+			res := entity.NewResEntity().ResWithSucc(nil)
 			requestId := fmt.Sprintf("%v", ctx.Value("requestId"))
 
 			ctxRequestId = requestId

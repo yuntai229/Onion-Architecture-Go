@@ -10,3 +10,7 @@ type Threads struct {
 	Content    string
 	Users      Users `gorm:"foreignKey:UserId"`
 }
+
+func NewThreadsEntity() Threads {
+	return Threads{}
+}

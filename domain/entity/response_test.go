@@ -7,6 +7,15 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func TestResponseEntity_NewResEntity(t *testing.T) {
+	Convey("New Instance", t, func() {
+		resEntity := entity.ResponseEntity{}
+		testObj := entity.NewResEntity()
+
+		So(testObj, ShouldEqual, resEntity)
+	})
+}
+
 func TestResponseEntity_ResWithSucc(t *testing.T) {
 	Convey("響應成功", t, func() {
 
@@ -16,7 +25,7 @@ func TestResponseEntity_ResWithSucc(t *testing.T) {
 				Message: "Succ",
 				Data:    nil,
 			}
-			testRes := entity.Response.ResWithSucc(nil)
+			testRes := entity.NewResEntity().ResWithSucc(nil)
 
 			So(testRes, ShouldEqual, res)
 		})
@@ -31,7 +40,7 @@ func TestResponseEntity_ResWithSucc(t *testing.T) {
 				Data:    testData,
 			}
 
-			testRes := entity.Response.ResWithSucc(testData)
+			testRes := entity.NewResEntity().ResWithSucc(testData)
 
 			So(testRes, ShouldEqual, res)
 		})
@@ -55,7 +64,7 @@ func TestResponseEntity_ResWithSucc(t *testing.T) {
 				Message: "Succ",
 				Data:    testData,
 			}
-			testRes := entity.Response.ResWithSucc(testData)
+			testRes := entity.NewResEntity().ResWithSucc(testData)
 			So(testRes, ShouldEqual, res)
 		})
 		Convey("data payload - array", func() {
@@ -72,7 +81,7 @@ func TestResponseEntity_ResWithSucc(t *testing.T) {
 				Message: "Succ",
 				Data:    testData,
 			}
-			testRes := entity.Response.ResWithSucc(testData)
+			testRes := entity.NewResEntity().ResWithSucc(testData)
 			So(testRes, ShouldEqual, res)
 		})
 
@@ -87,7 +96,7 @@ func TestResponseEntity_ResWithFail(t *testing.T) {
 			Message: err.Message,
 		}
 
-		testRes := entity.Response.ResWithFail(err)
+		testRes := entity.NewResEntity().ResWithFail(err)
 
 		So(testRes, ShouldEqual, res)
 	})

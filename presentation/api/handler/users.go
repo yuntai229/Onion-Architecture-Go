@@ -26,7 +26,7 @@ func (handler *UserHandler) Signup(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
 		newErr := entity.MissingFieldErr
-		res := entity.Response.ResWithFail(newErr)
+		res := entity.NewResEntity().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Signup] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -42,7 +42,7 @@ func (handler *UserHandler) Signup(ctx *gin.Context) {
 
 	if err := handler.UserApp.Signup(requestId, requestBody); err != nil {
 		newErr := *err
-		res := entity.Response.ResWithFail(newErr)
+		res := entity.NewResEntity().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Signup] Request end - Fail",
 			zap.String("requestId", requestId), zap.Any("res", res),
 		)
@@ -50,7 +50,7 @@ func (handler *UserHandler) Signup(ctx *gin.Context) {
 		return
 	}
 
-	res := entity.Response.ResWithSucc(nil)
+	res := entity.NewResEntity().ResWithSucc(nil)
 	handler.Logger.Info("[ApiHandler][UserHandler][Signup] Request end - Succ",
 		zap.String("requestId", requestId), zap.Any("res", res),
 	)
@@ -62,7 +62,7 @@ func (handler *UserHandler) Login(ctx *gin.Context) {
 	var requestBody dto.LoginRequest
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
 		newErr := entity.MissingFieldErr
-		res := entity.Response.ResWithFail(newErr)
+		res := entity.NewResEntity().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Login] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -79,7 +79,7 @@ func (handler *UserHandler) Login(ctx *gin.Context) {
 	jwtToken, err := handler.UserApp.Login(requestId, requestBody)
 	if err != nil {
 		newErr := *err
-		res := entity.Response.ResWithFail(newErr)
+		res := entity.NewResEntity().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Login] Request end - Fail",
 			zap.String("requestId", requestId), zap.Any("res", res),
 		)
@@ -90,7 +90,7 @@ func (handler *UserHandler) Login(ctx *gin.Context) {
 		Token: jwtToken,
 	}
 
-	res := entity.Response.ResWithSucc(resData)
+	res := entity.NewResEntity().ResWithSucc(resData)
 	handler.Logger.Info("[ApiHandler][UserHandler][Login] Request end - Succ",
 		zap.String("requestId", requestId), zap.Any("res", res),
 	)

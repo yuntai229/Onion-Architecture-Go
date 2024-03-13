@@ -13,6 +13,15 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func TestJwtEntity_NewJwtEntity(t *testing.T) {
+	Convey("New Instance", t, func() {
+		jwtEntity := entity.UserAuthClaims{}
+		testObj := entity.NewJwtEntity()
+
+		So(*testObj, ShouldEqual, jwtEntity)
+	})
+}
+
 func TestJwtEntity_VerifyJwt(t *testing.T) {
 	config := cmd.InitAppEnv()
 	var authClaims entity.UserAuthClaims

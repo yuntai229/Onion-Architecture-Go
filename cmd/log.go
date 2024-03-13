@@ -32,6 +32,8 @@ func InitLog() *zap.Logger {
 	config.OutputPaths = append(config.OutputPaths, "lumberjack:logs/ONION-ARCHITECTURE-GO.log")
 	logger, _ := config.Build()
 
+	// app version
+	// logger.With()
 	defer logger.Sync()
 
 	return logger

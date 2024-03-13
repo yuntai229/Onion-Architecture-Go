@@ -1,7 +1,5 @@
 package entity
 
-var Response ResponseEntity
-
 type ResponseEntity struct{}
 
 type ResSucc struct {
@@ -15,7 +13,11 @@ type ResFail struct {
 	Message string `json:"message"`
 }
 
-func (r *ResponseEntity) ResWithSucc(data any) ResSucc {
+func NewResEntity() ResponseEntity {
+	return ResponseEntity{}
+}
+
+func (entity ResponseEntity) ResWithSucc(data any) ResSucc {
 	res := ResSucc{
 		Code:    "0000",
 		Message: "Succ",
@@ -24,7 +26,7 @@ func (r *ResponseEntity) ResWithSucc(data any) ResSucc {
 	return res
 }
 
-func (r *ResponseEntity) ResWithFail(err ErrorMessage) ResFail {
+func (entity ResponseEntity) ResWithFail(err ErrorMessage) ResFail {
 	res := ResFail{
 		Code:    err.Code,
 		Message: err.Message,

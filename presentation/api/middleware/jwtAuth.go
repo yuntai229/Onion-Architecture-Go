@@ -25,7 +25,7 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 		tokenArr := ctx.Request.Header["Authorization"]
 		if len(tokenArr) == 0 {
 			newErr := entity.MissingTokenErr
-			res := entity.Response.ResWithFail(newErr)
+			res := entity.NewResEntity().ResWithFail(newErr)
 			middleware.Logger.Info("[ApiMiddleware][jwtAuth][Auth] Request end - Missing Token",
 				zap.String("requestId", requestId),
 				zap.Any("res", res),
@@ -41,11 +41,10 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 			zap.String("tokenString", tokenString),
 		)
 
-		var authClaims entity.UserAuthClaims
-		isValid, claims := authClaims.VerifyJwt(middleware.Config.JwtConfig.Key, tokenString)
+		isValid, claims := entity.NewJwtEntity().VerifyJwt(middleware.Config.JwtConfig.Key, tokenString)
 		if !isValid {
 			newErr := entity.TokenInvalidErr
-			res := entity.Response.ResWithFail(newErr)
+			res := entity.NewResEntity().ResWithFail(newErr)
 			middleware.Logger.Info("[ApiMiddleware][jwtAuth][Auth] Request end - Token auth fail",
 				zap.String("requestId", requestId),
 				zap.Any("res", res),
