@@ -1,2 +1,5 @@
 # log file
 logs/
+
+# Mac file system
+.DS_Store
