@@ -2,9 +2,9 @@ package app
 
 import (
 	"onion-architecrure-go/domain/model"
-	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
+	"onion-architecrure-go/ports"
 
 	"go.uber.org/zap"
 )

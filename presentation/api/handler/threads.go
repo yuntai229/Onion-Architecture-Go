@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"onion-architecrure-go/domain/model"
-	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
+	"onion-architecrure-go/ports"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

@@ -2,7 +2,7 @@ package rdb
 
 import (
 	"onion-architecrure-go/domain/model"
-	"onion-architecrure-go/domain/ports"
+	"onion-architecrure-go/ports"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm"
