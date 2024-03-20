@@ -1,7 +1,7 @@
 package rdb
 
 import (
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/domain/ports"
 
 	"go.uber.org/zap"
@@ -17,7 +17,7 @@ func NewThreadRepo(Db *gorm.DB, logger *zap.Logger) ports.ThreadRepo {
 	return &ThreadRepo{Db, logger}
 }
 
-func (repo *ThreadRepo) Create(requestId string, threadData entity.Threads) *entity.ErrorMessage {
+func (repo *ThreadRepo) Create(requestId string, threadData model.Threads) *model.ErrorMessage {
 	repo.Logger.Info("[rdb][ThreadRepo][Create] Entry", zap.String("requestId", requestId), zap.Any("threadData", threadData))
 
 	if result := repo.Db.Create(&threadData); result.Error != nil {
@@ -25,20 +25,20 @@ func (repo *ThreadRepo) Create(requestId string, threadData entity.Threads) *ent
 			zap.String("requestId", requestId),
 			zap.Error(result.Error),
 		)
-		return &entity.DbConnectErr
+		return &model.DbConnectErr
 	}
 
 	return nil
 }
 
-func (repo *ThreadRepo) GetByUserId(requestId string, pagination *entity.Pagination, userId uint) ([]entity.Threads, *entity.ErrorMessage) {
+func (repo *ThreadRepo) GetByUserId(requestId string, pagination *model.Pagination, userId uint) ([]model.Threads, *model.ErrorMessage) {
 	repo.Logger.Info("[rdb][ThreadRepo][GetByUserId] Entry",
 		zap.String("requestId", requestId),
 		zap.Uint("userId", userId),
 		zap.Any("pagination", pagination),
 	)
 
-	var data []entity.Threads
+	var data []model.Threads
 	var count int64
 
 	result := repo.Db.Scopes(pagination.NewDbPaginationScope()).Where("user_id = ?", userId).Order(pagination.ComposeOrderQuery()).Find(&data)
@@ -47,7 +47,7 @@ func (repo *ThreadRepo) GetByUserId(requestId string, pagination *entity.Paginat
 			zap.String("requestId", requestId),
 			zap.Error(result.Error),
 		)
-		return data, &entity.DbConnectErr
+		return data, &model.DbConnectErr
 	}
 	repo.Db.Model(data).Where("user_id = ?", userId).Count(&count)
 	pagination.CalculatePage(count)

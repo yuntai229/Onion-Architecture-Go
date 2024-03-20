@@ -2,7 +2,7 @@ package app_test
 
 import (
 	"onion-architecrure-go/app"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	mock_ports "onion-architecrure-go/mocks"
 	"testing"
@@ -21,7 +21,7 @@ func TestThreadApp_CreatePost(t *testing.T) {
 
 	requestId := "test-request-id"
 	var userId uint = 1
-	threadData := entity.Threads{
+	threadData := model.Threads{
 		UserId:  userId,
 		Content: "test",
 	}
@@ -42,12 +42,12 @@ func TestThreadApp_CreatePost(t *testing.T) {
 
 	Convey("Db Connect Error", t, func() {
 		gomock.InOrder(
-			mockThreadRepo.EXPECT().Create(gomock.Any(), threadData).Return(&entity.DbConnectErr),
+			mockThreadRepo.EXPECT().Create(gomock.Any(), threadData).Return(&model.DbConnectErr),
 		)
 		requestData := dto.PostRequest{
 			Content: "test",
 		}
-		errData := &entity.DbConnectErr
+		errData := &model.DbConnectErr
 
 		err := app.CreatePost(requestId, requestData, userId)
 		So(err, ShouldEqual, errData)
@@ -63,7 +63,7 @@ func TestThreadApp_GetPost(t *testing.T) {
 	requestId := "test-request-id"
 	dateTime, _ := time.Parse("2006-01-02 15:04:05", "2023-01-01 12:30:30")
 
-	res := []entity.Threads{{
+	res := []model.Threads{{
 		Model: gorm.Model{
 			ID:        1,
 			CreatedAt: dateTime,
@@ -84,7 +84,7 @@ func TestThreadApp_GetPost(t *testing.T) {
 
 	Convey("取得貼文成功", t, func() {
 		var userId uint = 1
-		pageParams := entity.Pagination{
+		pageParams := model.Pagination{
 			Page:     1,
 			PageSize: 20,
 			OrderBy:  "id",
@@ -105,7 +105,7 @@ func TestThreadApp_GetPost(t *testing.T) {
 
 	Convey("Db Connect Error", t, func() {
 		var userId uint = 1
-		pageParams := entity.Pagination{
+		pageParams := model.Pagination{
 			Page:     1,
 			PageSize: 20,
 			OrderBy:  "id",
@@ -117,10 +117,10 @@ func TestThreadApp_GetPost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadRepo.EXPECT().GetByUserId(gomock.Any(), &pageParams, userId).Return(res, &entity.DbConnectErr),
+			mockThreadRepo.EXPECT().GetByUserId(gomock.Any(), &pageParams, userId).Return(res, &model.DbConnectErr),
 		)
 		_, err := app.GetPost(requestId, &pageParams, requestData)
-		errData := &entity.DbConnectErr
+		errData := &model.DbConnectErr
 		So(err, ShouldEqual, errData)
 	})
 

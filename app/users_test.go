@@ -4,7 +4,7 @@ import (
 	"errors"
 	"onion-architecrure-go/app"
 	"onion-architecrure-go/cmd"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
 	mock_ports "onion-architecrure-go/mocks"
@@ -30,7 +30,7 @@ func TestUsersApp_Signup(t *testing.T) {
 	defer ctrl.Finish()
 
 	requestId := "test-request-id"
-	userData := entity.Users{
+	userData := model.Users{
 		Name:         "test",
 		Email:        "test",
 		HashPassword: extend.Helper.Hash("test"),
@@ -52,20 +52,20 @@ func TestUsersApp_Signup(t *testing.T) {
 
 		Convey("失敗 - 帳號已存在", func() {
 			gomock.InOrder(
-				mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&entity.UserExistErr),
+				mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&model.UserExistErr),
 			)
 			err := app.Signup(requestId, requestData)
-			errData := &entity.UserExistErr
+			errData := &model.UserExistErr
 			So(err, ShouldEqual, errData)
 		})
 	})
 
 	Convey("Db Connect Error", t, func() {
 		gomock.InOrder(
-			mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&entity.DbConnectErr),
+			mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&model.DbConnectErr),
 		)
 		err := app.Signup(requestId, requestData)
-		errData := &entity.DbConnectErr
+		errData := &model.DbConnectErr
 		So(err, ShouldEqual, errData)
 	})
 }
@@ -83,7 +83,7 @@ func TestUsersApp_Login(t *testing.T) {
 	faultPwd := "fiiew]l"
 	defer ctrl.Finish()
 
-	user := entity.Users{
+	user := model.Users{
 		Model: gorm.Model{
 			ID:        1,
 			CreatedAt: dateTime,
@@ -96,11 +96,11 @@ func TestUsersApp_Login(t *testing.T) {
 
 	Convey("登入密碼", t, func() {
 
-		var authClaims = entity.UserAuthClaims{
+		var authClaims = model.UserAuthClaims{
 			UserID: 1,
 		}
 
-		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "GenJwt", func(_ *entity.UserAuthClaims, key string) (string, error) {
+		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "GenJwt", func(_ *model.UserAuthClaims, key string) (string, error) {
 			return jwtToken, nil
 		})
 
@@ -123,7 +123,7 @@ func TestUsersApp_Login(t *testing.T) {
 				Email:    "1",
 				Password: faultPwd,
 			}
-			user := entity.Users{
+			user := model.Users{
 				Model: gorm.Model{
 					ID:        1,
 					CreatedAt: dateTime,
@@ -138,7 +138,7 @@ func TestUsersApp_Login(t *testing.T) {
 			)
 			token, err := app.Login(requestId, requestBody)
 			So(token, ShouldEqual, "")
-			So(err, ShouldEqual, &entity.PasswordIncorrectErr)
+			So(err, ShouldEqual, &model.PasswordIncorrectErr)
 		})
 
 	})
@@ -148,13 +148,13 @@ func TestUsersApp_Login(t *testing.T) {
 			Email:    "1",
 			Password: correctPwd,
 		}
-		var user entity.Users
+		var user model.Users
 		gomock.InOrder(
-			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &entity.UserNotFoundErr),
+			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &model.UserNotFoundErr),
 		)
 		token, err := app.Login(requestId, requestBody)
 		So(token, ShouldEqual, "")
-		So(err, ShouldEqual, &entity.UserNotFoundErr)
+		So(err, ShouldEqual, &model.UserNotFoundErr)
 	})
 
 	Convey("Jwt gen error", t, func() {
@@ -166,16 +166,16 @@ func TestUsersApp_Login(t *testing.T) {
 			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, nil),
 		)
 		defer monkey.UnpatchAll()
-		var authClaims = entity.UserAuthClaims{
+		var authClaims = model.UserAuthClaims{
 			UserID: 1,
 		}
 
-		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "GenJwt", func(_ *entity.UserAuthClaims, key string) (string, error) {
+		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "GenJwt", func(_ *model.UserAuthClaims, key string) (string, error) {
 			return "", errors.New("error")
 		})
 		token, err := app.Login(requestId, requestBody)
 		So(token, ShouldEqual, "")
-		So(err, ShouldEqual, &entity.TokenGenFail)
+		So(err, ShouldEqual, &model.TokenGenFail)
 	})
 
 	Convey("Db Connect Error", t, func() {
@@ -183,11 +183,11 @@ func TestUsersApp_Login(t *testing.T) {
 			Email:    "1",
 			Password: correctPwd,
 		}
-		user = entity.Users{}
+		user = model.Users{}
 		gomock.InOrder(
-			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &entity.DbConnectErr),
+			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &model.DbConnectErr),
 		)
-		errData := &entity.DbConnectErr
+		errData := &model.DbConnectErr
 		token, err := app.Login(requestId, requestBody)
 		So(token, ShouldEqual, "")
 		So(err, ShouldEqual, errData)

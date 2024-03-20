@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
@@ -27,8 +27,8 @@ func (handler *ThreadHandler) CreatePost(ctx *gin.Context) {
 	var requestBody dto.PostRequest
 
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
-		newErr := entity.MissingFieldErr
-		res := entity.NewResEntity().ResWithFail(newErr)
+		newErr := model.MissingFieldErr
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][ThreadHandler][CreatePost] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -40,8 +40,8 @@ func (handler *ThreadHandler) CreatePost(ctx *gin.Context) {
 
 	userId, ok := ctx.Get("UserId")
 	if !ok {
-		newErr := entity.TokenInvalidErr
-		res := entity.NewResEntity().ResWithFail(newErr)
+		newErr := model.TokenInvalidErr
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Error("[ApiHandler][ThreadHandler][CreatePost] Request end - Jwt Error",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -53,7 +53,7 @@ func (handler *ThreadHandler) CreatePost(ctx *gin.Context) {
 
 	if err := handler.ThreadApp.CreatePost(requestId, requestBody, userId.(uint)); err != nil {
 		newErr := *err
-		res := entity.NewResEntity().ResWithFail(newErr)
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][ThreadHandler][CreatePost] Request end - Fail",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -61,7 +61,7 @@ func (handler *ThreadHandler) CreatePost(ctx *gin.Context) {
 		ctx.JSON(newErr.HttpCode, res)
 		return
 	}
-	res := entity.NewResEntity().ResWithSucc(nil)
+	res := model.NewResModel().ResWithSucc(nil)
 	handler.Logger.Info("[ApiHandler][ThreadHandler][CreatePost] Request end - Succ",
 		zap.String("requestId", requestId), zap.Any("res", res),
 	)
@@ -73,8 +73,8 @@ func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 	var params dto.GetPostRequest
 
 	if err := ctx.ShouldBind(&params); err != nil {
-		newErr := entity.MissingFieldErr
-		res := entity.NewResEntity().ResWithFail(newErr)
+		newErr := model.MissingFieldErr
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Error("[ApiHandler][ThreadHandler][GetPost] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -86,8 +86,8 @@ func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 
 	userId, ok := ctx.Get("UserId")
 	if !ok {
-		newErr := entity.TokenInvalidErr
-		res := entity.NewResEntity().ResWithFail(newErr)
+		newErr := model.TokenInvalidErr
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Error("[ApiHandler][ThreadHandler][GetPost] Request end - Jwt Error",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -104,7 +104,7 @@ func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 	threadData, err := handler.ThreadApp.GetPost(requestId, &params.Pagination, params)
 	if err != nil {
 		newErr := *err
-		res := entity.NewResEntity().ResWithFail(newErr)
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][ThreadHandler][GetPost] Request end - Fail",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -124,7 +124,7 @@ func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 		})
 	}
 
-	res := entity.NewResEntity().ResWithSucc(params.Pagination.Format(resData))
+	res := model.NewResModel().ResWithSucc(params.Pagination.Format(resData))
 	handler.Logger.Info("[ApiHandler][ThreadHandler][CreatePost] Request end - Succ",
 		zap.String("requestId", requestId), zap.Any("res", res),
 	)

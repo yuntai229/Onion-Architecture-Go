@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -10,7 +10,7 @@ import (
 
 var Db *gorm.DB
 
-func InitDb(config *entity.Config) *gorm.DB {
+func InitDb(config *model.Config) *gorm.DB {
 	var option = "%s:%s@tcp(%s:%s)/%s?charset=%s&timeout=%s&loc=Local&parseTime=True"
 
 	dsn := fmt.Sprintf(option,

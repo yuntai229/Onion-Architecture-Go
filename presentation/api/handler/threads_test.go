@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"onion-architecrure-go/cmd"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	mock_ports "onion-architecrure-go/mocks"
 	"onion-architecrure-go/presentation/api/handler"
@@ -35,8 +35,8 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 	handler := handler.NewThreadHandler(mockThreadApp, mockLogger)
 	defer ctrl.Finish()
 
-	var authClaims entity.UserAuthClaims
-	monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, key, tokenString string) (bool, *entity.UserAuthClaims) {
+	var authClaims model.UserAuthClaims
+	monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *model.UserAuthClaims, key, tokenString string) (bool, *model.UserAuthClaims) {
 		e.UserID = 1
 		return true, e
 	})
@@ -60,12 +60,12 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.MissingFieldErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.MissingFieldErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.MissingFieldErr.Message)
+		So(resp.Code, ShouldEqual, model.MissingFieldErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.MissingFieldErr.Code)
+		So(resultBody.Message, ShouldEqual, model.MissingFieldErr.Message)
 	})
 
 	Convey("ctx get userid error", t, func() {
@@ -80,12 +80,12 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.TokenInvalidErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.TokenInvalidErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.TokenInvalidErr.Message)
+		So(resp.Code, ShouldEqual, model.TokenInvalidErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.TokenInvalidErr.Code)
+		So(resultBody.Message, ShouldEqual, model.TokenInvalidErr.Message)
 	})
 
 	Convey("新增貼文成功", t, func() {
@@ -104,7 +104,7 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResSucc
+		var resultBody model.ResSucc
 		_ = json.Unmarshal(respBody, &resultBody)
 
 		So(resp.Code, ShouldEqual, http.StatusOK)
@@ -119,7 +119,7 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadApp.EXPECT().CreatePost(gomock.Any(), postRequest, userId).Return(&entity.DbConnectErr),
+			mockThreadApp.EXPECT().CreatePost(gomock.Any(), postRequest, userId).Return(&model.DbConnectErr),
 		)
 
 		jsons, _ := json.Marshal(postRequest)
@@ -129,12 +129,12 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.DbConnectErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.DbConnectErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.DbConnectErr.Message)
+		So(resp.Code, ShouldEqual, model.DbConnectErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.DbConnectErr.Code)
+		So(resultBody.Message, ShouldEqual, model.DbConnectErr.Message)
 	})
 }
 
@@ -147,8 +147,8 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 	handler := handler.NewThreadHandler(mockThreadApp, mockLogger)
 	defer ctrl.Finish()
 
-	var authClaims entity.UserAuthClaims
-	monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, key, tokenString string) (bool, *entity.UserAuthClaims) {
+	var authClaims model.UserAuthClaims
+	monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *model.UserAuthClaims, key, tokenString string) (bool, *model.UserAuthClaims) {
 		e.UserID = 1
 		return true, e
 	})
@@ -162,7 +162,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 	router.GET("/threads/post", jwtMiddelware.Auth(), handler.GetPost)
 
 	dateTime, _ := time.Parse("2006-01-02 15:04:05", "2023-01-01 12:30:30")
-	getPostContent := []entity.Threads{{
+	getPostContent := []model.Threads{{
 		Model: gorm.Model{
 			ID:        1,
 			CreatedAt: dateTime,
@@ -188,12 +188,12 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.TokenInvalidErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.TokenInvalidErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.TokenInvalidErr.Message)
+		So(resp.Code, ShouldEqual, model.TokenInvalidErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.TokenInvalidErr.Code)
+		So(resultBody.Message, ShouldEqual, model.TokenInvalidErr.Message)
 	})
 
 	Convey("取得貼文成功", t, func() {
@@ -205,7 +205,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 			var sort string = "asc"
 			requestParams := fmt.Sprintf("userId=%v&page=%v&pageSize=%v&orderBy=%v&sort=%v", userId, page, pageSize, orderBy, sort)
 			testUrl := fmt.Sprintf("%v?%v", "/threads/post", requestParams)
-			pageParams := entity.Pagination{
+			pageParams := model.Pagination{
 				Page:     page,
 				PageSize: pageSize,
 				OrderBy:  orderBy,
@@ -226,14 +226,14 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 			router.ServeHTTP(resp, req)
 
 			respBody, _ := io.ReadAll(resp.Body)
-			var resultBody entity.ResSucc
-			var data entity.PageResponse
+			var resultBody model.ResSucc
+			var data model.PageResponse
 
 			_ = json.Unmarshal(respBody, &resultBody)
 			mapstructure.Decode(resultBody.Data, &data)
 
-			var content []entity.Threads
-			var contentElement entity.Threads
+			var content []model.Threads
+			var contentElement model.Threads
 			for _, item := range data.Collection.([]any) {
 				createdAt, _ := time.Parse("2006-01-02 15:04:05", item.(map[string]any)["createdAt"].(string))
 				updatedAt, _ := time.Parse("2006-01-02 15:04:05", item.(map[string]any)["updatedAt"].(string))
@@ -257,7 +257,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 			var orderBy string = "id"
 			var sort string = "desc"
 			testUrl := "/threads/post"
-			pageParams := entity.Pagination{
+			pageParams := model.Pagination{
 				Page:     page,
 				PageSize: pageSize,
 				OrderBy:  orderBy,
@@ -278,14 +278,14 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 			router.ServeHTTP(resp, req)
 
 			respBody, _ := io.ReadAll(resp.Body)
-			var resultBody entity.ResSucc
-			var data entity.PageResponse
+			var resultBody model.ResSucc
+			var data model.PageResponse
 
 			_ = json.Unmarshal(respBody, &resultBody)
 			mapstructure.Decode(resultBody.Data, &data)
 
-			var content []entity.Threads
-			var contentElement entity.Threads
+			var content []model.Threads
+			var contentElement model.Threads
 			for _, item := range data.Collection.([]any) {
 				createdAt, _ := time.Parse("2006-01-02 15:04:05", item.(map[string]any)["createdAt"].(string))
 				updatedAt, _ := time.Parse("2006-01-02 15:04:05", item.(map[string]any)["updatedAt"].(string))
@@ -312,7 +312,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 		var sort string = "asc"
 		requestParams := fmt.Sprintf("userId=%v&page=%v&pageSize=%v&orderBy=%v&sort=%v", userId, page, pageSize, orderBy, sort)
 		testUrl := fmt.Sprintf("%v?%v", "/threads/post", requestParams)
-		pageParams := entity.Pagination{
+		pageParams := model.Pagination{
 			Page:     page,
 			PageSize: pageSize,
 			OrderBy:  orderBy,
@@ -324,7 +324,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadApp.EXPECT().GetPost(gomock.Any(), &pageParams, getPostRequest).Return(getPostContent, &entity.DbConnectErr),
+			mockThreadApp.EXPECT().GetPost(gomock.Any(), &pageParams, getPostRequest).Return(getPostContent, &model.DbConnectErr),
 		)
 
 		req := httptest.NewRequest(http.MethodGet, testUrl, nil)
@@ -333,10 +333,10 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
-		So(resp.Code, ShouldEqual, entity.DbConnectErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.DbConnectErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.DbConnectErr.Message)
+		So(resp.Code, ShouldEqual, model.DbConnectErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.DbConnectErr.Code)
+		So(resultBody.Message, ShouldEqual, model.DbConnectErr.Message)
 	})
 }

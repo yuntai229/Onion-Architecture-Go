@@ -5,7 +5,7 @@
 package mock_ports
 
 import (
-	entity "onion-architecrure-go/domain/entity"
+	model "onion-architecrure-go/domain/model"
 	dto "onion-architecrure-go/dto"
 	reflect "reflect"
 
@@ -36,11 +36,11 @@ func (m *MockUserApp) EXPECT() *MockUserAppMockRecorder {
 }
 
 // Login mocks base method.
-func (m *MockUserApp) Login(requestId string, requestBody dto.LoginRequest) (string, *entity.ErrorMessage) {
+func (m *MockUserApp) Login(requestId string, requestBody dto.LoginRequest) (string, *model.ErrorMessage) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Login", requestId, requestBody)
 	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(*entity.ErrorMessage)
+	ret1, _ := ret[1].(*model.ErrorMessage)
 	return ret0, ret1
 }
 
@@ -51,10 +51,10 @@ func (mr *MockUserAppMockRecorder) Login(requestId, requestBody interface{}) *go
 }
 
 // Signup mocks base method.
-func (m *MockUserApp) Signup(requestId string, requestBody dto.SignupRequest) *entity.ErrorMessage {
+func (m *MockUserApp) Signup(requestId string, requestBody dto.SignupRequest) *model.ErrorMessage {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Signup", requestId, requestBody)
-	ret0, _ := ret[0].(*entity.ErrorMessage)
+	ret0, _ := ret[0].(*model.ErrorMessage)
 	return ret0
 }
 
@@ -88,10 +88,10 @@ func (m *MockUserRepo) EXPECT() *MockUserRepoMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserRepo) Create(requestId string, userData entity.Users) *entity.ErrorMessage {
+func (m *MockUserRepo) Create(requestId string, userData model.Users) *model.ErrorMessage {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", requestId, userData)
-	ret0, _ := ret[0].(*entity.ErrorMessage)
+	ret0, _ := ret[0].(*model.ErrorMessage)
 	return ret0
 }
 
@@ -102,11 +102,11 @@ func (mr *MockUserRepoMockRecorder) Create(requestId, userData interface{}) *gom
 }
 
 // GetByMail mocks base method.
-func (m *MockUserRepo) GetByMail(requestId, mail string) (entity.Users, *entity.ErrorMessage) {
+func (m *MockUserRepo) GetByMail(requestId, mail string) (model.Users, *model.ErrorMessage) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByMail", requestId, mail)
-	ret0, _ := ret[0].(entity.Users)
-	ret1, _ := ret[1].(*entity.ErrorMessage)
+	ret0, _ := ret[0].(model.Users)
+	ret1, _ := ret[1].(*model.ErrorMessage)
 	return ret0, ret1
 }
 

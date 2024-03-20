@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"onion-architecrure-go/app"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/infrastructure/rdb"
 	"onion-architecrure-go/presentation/api/handler"
 	"onion-architecrure-go/presentation/api/middleware"
@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitApp(config *entity.Config, db *gorm.DB, logger *zap.Logger) (handlers []any, middlewares []any) {
+func InitApp(config *model.Config, db *gorm.DB, logger *zap.Logger) (handlers []any, middlewares []any) {
 	userRepo := rdb.NewUserRepo(db, logger)
 	threadRepo := rdb.NewThreadRepo(db, logger)
 

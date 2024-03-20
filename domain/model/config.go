@@ -1,4 +1,4 @@
-package entity
+package model
 
 type Config struct {
 	Env       string

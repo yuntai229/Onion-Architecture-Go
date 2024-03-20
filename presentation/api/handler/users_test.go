@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	mock_ports "onion-architecrure-go/mocks"
 	"onion-architecrure-go/presentation/api/handler"
@@ -41,12 +41,12 @@ func TestUsersHandler_Signup(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.MissingFieldErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.MissingFieldErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.MissingFieldErr.Message)
+		So(resp.Code, ShouldEqual, model.MissingFieldErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.MissingFieldErr.Code)
+		So(resultBody.Message, ShouldEqual, model.MissingFieldErr.Message)
 	})
 
 	Convey("註冊", t, func() {
@@ -65,7 +65,7 @@ func TestUsersHandler_Signup(t *testing.T) {
 			router.ServeHTTP(resp, req)
 
 			respBody, _ := io.ReadAll(resp.Body)
-			var resultBody entity.ResSucc
+			var resultBody model.ResSucc
 			_ = json.Unmarshal(respBody, &resultBody)
 
 			So(resp.Code, ShouldEqual, http.StatusOK)
@@ -76,19 +76,19 @@ func TestUsersHandler_Signup(t *testing.T) {
 
 		Convey("失敗 - 帳號已存在", func() {
 			gomock.InOrder(
-				mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&entity.UserExistErr),
+				mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&model.UserExistErr),
 			)
 			req := httptest.NewRequest(http.MethodPost, testUrl, bytes.NewBuffer(jsons))
 			resp := httptest.NewRecorder()
 			router.ServeHTTP(resp, req)
 
 			respBody, _ := io.ReadAll(resp.Body)
-			var resultBody entity.ResFail
+			var resultBody model.ResFail
 			_ = json.Unmarshal(respBody, &resultBody)
 
-			So(resp.Code, ShouldEqual, entity.UserExistErr.HttpCode)
-			So(resultBody.Code, ShouldEqual, entity.UserExistErr.Code)
-			So(resultBody.Message, ShouldEqual, entity.UserExistErr.Message)
+			So(resp.Code, ShouldEqual, model.UserExistErr.HttpCode)
+			So(resultBody.Code, ShouldEqual, model.UserExistErr.Code)
+			So(resultBody.Message, ShouldEqual, model.UserExistErr.Message)
 		})
 	})
 
@@ -99,7 +99,7 @@ func TestUsersHandler_Signup(t *testing.T) {
 			Password: "ooo",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&entity.DbConnectErr),
+			mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&model.DbConnectErr),
 		)
 
 		jsons, _ := json.Marshal(signupRequest)
@@ -108,12 +108,12 @@ func TestUsersHandler_Signup(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.DbConnectErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.DbConnectErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.DbConnectErr.Message)
+		So(resp.Code, ShouldEqual, model.DbConnectErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.DbConnectErr.Code)
+		So(resultBody.Message, ShouldEqual, model.DbConnectErr.Message)
 	})
 }
 
@@ -141,12 +141,12 @@ func TestUsersHandler_Login(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.MissingFieldErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.MissingFieldErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.MissingFieldErr.Message)
+		So(resp.Code, ShouldEqual, model.MissingFieldErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.MissingFieldErr.Code)
+		So(resultBody.Message, ShouldEqual, model.MissingFieldErr.Message)
 	})
 
 	Convey("使用者不存在", t, func() {
@@ -155,7 +155,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			Password: "test",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &entity.UserNotFoundErr),
+			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &model.UserNotFoundErr),
 		)
 
 		jsons, _ := json.Marshal(loginRequest)
@@ -164,12 +164,12 @@ func TestUsersHandler_Login(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.UserNotFoundErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.UserNotFoundErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.UserNotFoundErr.Message)
+		So(resp.Code, ShouldEqual, model.UserNotFoundErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.UserNotFoundErr.Code)
+		So(resultBody.Message, ShouldEqual, model.UserNotFoundErr.Message)
 	})
 
 	Convey("登入密碼", t, func() {
@@ -191,7 +191,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			router.ServeHTTP(resp, req)
 
 			respBody, _ := io.ReadAll(resp.Body)
-			var resultBody entity.ResSucc
+			var resultBody model.ResSucc
 			_ = json.Unmarshal(respBody, &resultBody)
 
 			So(resp.Code, ShouldEqual, http.StatusOK)
@@ -202,7 +202,7 @@ func TestUsersHandler_Login(t *testing.T) {
 
 		Convey("密碼錯誤", func() {
 			gomock.InOrder(
-				mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &entity.PasswordIncorrectErr),
+				mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &model.PasswordIncorrectErr),
 			)
 
 			jsons, _ := json.Marshal(loginRequest)
@@ -211,12 +211,12 @@ func TestUsersHandler_Login(t *testing.T) {
 			router.ServeHTTP(resp, req)
 
 			respBody, _ := io.ReadAll(resp.Body)
-			var resultBody entity.ResFail
+			var resultBody model.ResFail
 			_ = json.Unmarshal(respBody, &resultBody)
 
-			So(resp.Code, ShouldEqual, entity.PasswordIncorrectErr.HttpCode)
-			So(resultBody.Code, ShouldEqual, entity.PasswordIncorrectErr.Code)
-			So(resultBody.Message, ShouldEqual, entity.PasswordIncorrectErr.Message)
+			So(resp.Code, ShouldEqual, model.PasswordIncorrectErr.HttpCode)
+			So(resultBody.Code, ShouldEqual, model.PasswordIncorrectErr.Code)
+			So(resultBody.Message, ShouldEqual, model.PasswordIncorrectErr.Message)
 		})
 	})
 
@@ -226,7 +226,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			Password: "test",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &entity.TokenGenFail),
+			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &model.TokenGenFail),
 		)
 
 		jsons, _ := json.Marshal(loginRequest)
@@ -235,12 +235,12 @@ func TestUsersHandler_Login(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.TokenGenFail.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.TokenGenFail.Code)
-		So(resultBody.Message, ShouldEqual, entity.TokenGenFail.Message)
+		So(resp.Code, ShouldEqual, model.TokenGenFail.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.TokenGenFail.Code)
+		So(resultBody.Message, ShouldEqual, model.TokenGenFail.Message)
 	})
 
 	Convey("Db Connect Error", t, func() {
@@ -249,7 +249,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			Password: "test",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &entity.DbConnectErr),
+			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &model.DbConnectErr),
 		)
 
 		jsons, _ := json.Marshal(loginRequest)
@@ -258,11 +258,11 @@ func TestUsersHandler_Login(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		respBody, _ := io.ReadAll(resp.Body)
-		var resultBody entity.ResFail
+		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, entity.DbConnectErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, entity.DbConnectErr.Code)
-		So(resultBody.Message, ShouldEqual, entity.DbConnectErr.Message)
+		So(resp.Code, ShouldEqual, model.DbConnectErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, model.DbConnectErr.Code)
+		So(resultBody.Message, ShouldEqual, model.DbConnectErr.Message)
 	})
 }

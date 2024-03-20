@@ -1,31 +1,31 @@
-package entity_test
+package model_test
 
 import (
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestResponseEntity_NewResEntity(t *testing.T) {
+func TestResponseModel_NewResModel(t *testing.T) {
 	Convey("New Instance", t, func() {
-		resEntity := entity.ResponseEntity{}
-		testObj := entity.NewResEntity()
+		resModel := model.ResponseModel{}
+		testObj := model.NewResModel()
 
-		So(testObj, ShouldEqual, resEntity)
+		So(testObj, ShouldEqual, resModel)
 	})
 }
 
-func TestResponseEntity_ResWithSucc(t *testing.T) {
+func TestResponseModel_ResWithSucc(t *testing.T) {
 	Convey("響應成功", t, func() {
 
 		Convey("data payload - nil", func() {
-			res := entity.ResSucc{
+			res := model.ResSucc{
 				Code:    "0000",
 				Message: "Succ",
 				Data:    nil,
 			}
-			testRes := entity.NewResEntity().ResWithSucc(nil)
+			testRes := model.NewResModel().ResWithSucc(nil)
 
 			So(testRes, ShouldEqual, res)
 		})
@@ -34,13 +34,13 @@ func TestResponseEntity_ResWithSucc(t *testing.T) {
 				val int
 			}
 			testData := testStruct{3}
-			res := entity.ResSucc{
+			res := model.ResSucc{
 				Code:    "0000",
 				Message: "Succ",
 				Data:    testData,
 			}
 
-			testRes := entity.NewResEntity().ResWithSucc(testData)
+			testRes := model.NewResModel().ResWithSucc(testData)
 
 			So(testRes, ShouldEqual, res)
 		})
@@ -59,12 +59,12 @@ func TestResponseEntity_ResWithSucc(t *testing.T) {
 					val: 4,
 				},
 			}
-			res := entity.ResSucc{
+			res := model.ResSucc{
 				Code:    "0000",
 				Message: "Succ",
 				Data:    testData,
 			}
-			testRes := entity.NewResEntity().ResWithSucc(testData)
+			testRes := model.NewResModel().ResWithSucc(testData)
 			So(testRes, ShouldEqual, res)
 		})
 		Convey("data payload - array", func() {
@@ -76,27 +76,27 @@ func TestResponseEntity_ResWithSucc(t *testing.T) {
 			for i := 0; i < 10; i++ {
 				testData = append(testData, testStruct{i})
 			}
-			res := entity.ResSucc{
+			res := model.ResSucc{
 				Code:    "0000",
 				Message: "Succ",
 				Data:    testData,
 			}
-			testRes := entity.NewResEntity().ResWithSucc(testData)
+			testRes := model.NewResModel().ResWithSucc(testData)
 			So(testRes, ShouldEqual, res)
 		})
 
 	})
 }
 
-func TestResponseEntity_ResWithFail(t *testing.T) {
+func TestResponseModel_ResWithFail(t *testing.T) {
 	Convey("響應失敗", t, func() {
-		err := entity.NotFoundErr
-		res := entity.ResFail{
+		err := model.NotFoundErr
+		res := model.ResFail{
 			Code:    err.Code,
 			Message: err.Message,
 		}
 
-		testRes := entity.NewResEntity().ResWithFail(err)
+		testRes := model.NewResModel().ResWithFail(err)
 
 		So(testRes, ShouldEqual, res)
 	})

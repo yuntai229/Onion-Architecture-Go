@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
 
@@ -25,8 +25,8 @@ func (handler *UserHandler) Signup(ctx *gin.Context) {
 	var requestBody dto.SignupRequest
 
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
-		newErr := entity.MissingFieldErr
-		res := entity.NewResEntity().ResWithFail(newErr)
+		newErr := model.MissingFieldErr
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Signup] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -42,7 +42,7 @@ func (handler *UserHandler) Signup(ctx *gin.Context) {
 
 	if err := handler.UserApp.Signup(requestId, requestBody); err != nil {
 		newErr := *err
-		res := entity.NewResEntity().ResWithFail(newErr)
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Signup] Request end - Fail",
 			zap.String("requestId", requestId), zap.Any("res", res),
 		)
@@ -50,7 +50,7 @@ func (handler *UserHandler) Signup(ctx *gin.Context) {
 		return
 	}
 
-	res := entity.NewResEntity().ResWithSucc(nil)
+	res := model.NewResModel().ResWithSucc(nil)
 	handler.Logger.Info("[ApiHandler][UserHandler][Signup] Request end - Succ",
 		zap.String("requestId", requestId), zap.Any("res", res),
 	)
@@ -61,8 +61,8 @@ func (handler *UserHandler) Login(ctx *gin.Context) {
 	requestId := fmt.Sprintf("%v", ctx.Value("requestId"))
 	var requestBody dto.LoginRequest
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
-		newErr := entity.MissingFieldErr
-		res := entity.NewResEntity().ResWithFail(newErr)
+		newErr := model.MissingFieldErr
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Login] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
 			zap.Any("res", res),
@@ -79,7 +79,7 @@ func (handler *UserHandler) Login(ctx *gin.Context) {
 	jwtToken, err := handler.UserApp.Login(requestId, requestBody)
 	if err != nil {
 		newErr := *err
-		res := entity.NewResEntity().ResWithFail(newErr)
+		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Login] Request end - Fail",
 			zap.String("requestId", requestId), zap.Any("res", res),
 		)
@@ -90,7 +90,7 @@ func (handler *UserHandler) Login(ctx *gin.Context) {
 		Token: jwtToken,
 	}
 
-	res := entity.NewResEntity().ResWithSucc(resData)
+	res := model.NewResModel().ResWithSucc(resData)
 	handler.Logger.Info("[ApiHandler][UserHandler][Login] Request end - Succ",
 		zap.String("requestId", requestId), zap.Any("res", res),
 	)

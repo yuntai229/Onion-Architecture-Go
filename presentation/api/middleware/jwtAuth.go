@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -10,11 +10,11 @@ import (
 )
 
 type JwtAuthMiddleware struct {
-	Config *entity.Config
+	Config *model.Config
 	Logger *zap.Logger
 }
 
-func NewJwtMiddleware(config *entity.Config, logger *zap.Logger) *JwtAuthMiddleware {
+func NewJwtMiddleware(config *model.Config, logger *zap.Logger) *JwtAuthMiddleware {
 	return &JwtAuthMiddleware{config, logger}
 }
 
@@ -24,8 +24,8 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 
 		tokenArr := ctx.Request.Header["Authorization"]
 		if len(tokenArr) == 0 {
-			newErr := entity.MissingTokenErr
-			res := entity.NewResEntity().ResWithFail(newErr)
+			newErr := model.MissingTokenErr
+			res := model.NewResModel().ResWithFail(newErr)
 			middleware.Logger.Info("[ApiMiddleware][jwtAuth][Auth] Request end - Missing Token",
 				zap.String("requestId", requestId),
 				zap.Any("res", res),
@@ -41,10 +41,10 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 			zap.String("tokenString", tokenString),
 		)
 
-		isValid, claims := entity.NewJwtEntity().VerifyJwt(middleware.Config.JwtConfig.Key, tokenString)
+		isValid, claims := model.NewJwtModel().VerifyJwt(middleware.Config.JwtConfig.Key, tokenString)
 		if !isValid {
-			newErr := entity.TokenInvalidErr
-			res := entity.NewResEntity().ResWithFail(newErr)
+			newErr := model.TokenInvalidErr
+			res := model.NewResModel().ResWithFail(newErr)
 			middleware.Logger.Info("[ApiMiddleware][jwtAuth][Auth] Request end - Token auth fail",
 				zap.String("requestId", requestId),
 				zap.Any("res", res),

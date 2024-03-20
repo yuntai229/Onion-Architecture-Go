@@ -1,13 +1,13 @@
 package dto
 
-import "onion-architecrure-go/domain/entity"
+import "onion-architecrure-go/domain/model"
 
 type PostRequest struct {
 	Content string `json:"content" binding:"required"`
 }
 
 type GetPostRequest struct {
-	entity.Pagination
+	model.Pagination
 	UserId uint `form:"userId"`
 }
 

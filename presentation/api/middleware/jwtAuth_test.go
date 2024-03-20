@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"onion-architecrure-go/cmd"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/presentation/api/middleware"
 	"reflect"
 	"testing"
@@ -33,13 +33,13 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 	Convey("驗證成功", t, func() {
 		var ctxUserId any
 		router.GET("/jwt/success", jwtMiddelware.Auth(), func(ctx *gin.Context) {
-			res := entity.NewResEntity().ResWithSucc(nil)
+			res := model.NewResModel().ResWithSucc(nil)
 			userId, _ := ctx.Get("UserId")
 			ctxUserId = userId
 			ctx.JSON(http.StatusOK, res)
 		})
-		var authClaims entity.UserAuthClaims
-		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, key, tokenString string) (bool, *entity.UserAuthClaims) {
+		var authClaims model.UserAuthClaims
+		monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *model.UserAuthClaims, key, tokenString string) (bool, *model.UserAuthClaims) {
 			e.UserID = 999
 			return true, e
 		})
@@ -51,7 +51,7 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		resBody, _ := io.ReadAll(resp.Body)
-		var resultResBody entity.ResSucc
+		var resultResBody model.ResSucc
 		_ = json.Unmarshal(resBody, &resultResBody)
 
 		So(ctxUserId.(uint), ShouldEqual, 999)
@@ -64,8 +64,8 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 	Convey("驗證失敗", t, func() {
 		Convey("沒有 token", func() {
 			router.GET("/jwt/missingToken", jwtMiddelware.Auth(), func(ctx *gin.Context) {
-				newErr := entity.MissingTokenErr
-				res := entity.NewResEntity().ResWithFail(newErr)
+				newErr := model.MissingTokenErr
+				res := model.NewResModel().ResWithFail(newErr)
 				ctx.JSON(newErr.HttpCode, res)
 			})
 
@@ -74,22 +74,22 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 			router.ServeHTTP(resp, req)
 
 			resBody, _ := io.ReadAll(resp.Body)
-			var resultResBody entity.ResFail
+			var resultResBody model.ResFail
 			_ = json.Unmarshal(resBody, &resultResBody)
 
-			So(resp.Code, ShouldEqual, entity.MissingTokenErr.HttpCode)
-			So(resultResBody.Code, ShouldEqual, entity.MissingTokenErr.Code)
-			So(resultResBody.Message, ShouldEqual, entity.MissingTokenErr.Message)
+			So(resp.Code, ShouldEqual, model.MissingTokenErr.HttpCode)
+			So(resultResBody.Code, ShouldEqual, model.MissingTokenErr.Code)
+			So(resultResBody.Message, ShouldEqual, model.MissingTokenErr.Message)
 		})
 		Convey("無效 token", func() {
 			router.GET("/jwt/invalidToken", jwtMiddelware.Auth(), func(ctx *gin.Context) {
-				newErr := entity.TokenInvalidErr
-				res := entity.NewResEntity().ResWithFail(newErr)
+				newErr := model.TokenInvalidErr
+				res := model.NewResModel().ResWithFail(newErr)
 				ctx.JSON(newErr.HttpCode, res)
 			})
 
-			var authClaims entity.UserAuthClaims
-			monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *entity.UserAuthClaims, key, tokenString string) (bool, *entity.UserAuthClaims) {
+			var authClaims model.UserAuthClaims
+			monkey.PatchInstanceMethod(reflect.TypeOf(&authClaims), "VerifyJwt", func(e *model.UserAuthClaims, key, tokenString string) (bool, *model.UserAuthClaims) {
 				return false, nil
 			})
 			defer monkey.UnpatchAll()
@@ -100,12 +100,12 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 			router.ServeHTTP(resp, req)
 
 			respBody, _ := io.ReadAll(resp.Body)
-			var resultResBody entity.ResFail
+			var resultResBody model.ResFail
 			_ = json.Unmarshal(respBody, &resultResBody)
 
-			So(resp.Code, ShouldEqual, entity.TokenInvalidErr.HttpCode)
-			So(resultResBody.Code, ShouldEqual, entity.TokenInvalidErr.Code)
-			So(resultResBody.Message, ShouldEqual, entity.TokenInvalidErr.Message)
+			So(resp.Code, ShouldEqual, model.TokenInvalidErr.HttpCode)
+			So(resultResBody.Code, ShouldEqual, model.TokenInvalidErr.Code)
+			So(resultResBody.Message, ShouldEqual, model.TokenInvalidErr.Message)
 		})
 
 	})

@@ -1,16 +1,16 @@
-package entity_test
+package model_test
 
 import (
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"reflect"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestPaginationEntity_NewDbPaginationScope(t *testing.T) {
+func TestPaginationModel_NewDbPaginationScope(t *testing.T) {
 	Convey("設定搜索範圍", t, func() {
-		pagination := entity.Pagination{
+		pagination := model.Pagination{
 			Page:     2,
 			PageSize: 10,
 		}
@@ -19,9 +19,9 @@ func TestPaginationEntity_NewDbPaginationScope(t *testing.T) {
 	})
 }
 
-func TestPaginationEntity_ComposeOrderQuery(t *testing.T) {
+func TestPaginationModel_ComposeOrderQuery(t *testing.T) {
 	Convey("設定資料排序方式", t, func() {
-		pagination := entity.Pagination{
+		pagination := model.Pagination{
 			OrderBy: "id",
 			Sort:    "asc",
 		}
@@ -33,9 +33,9 @@ func TestPaginationEntity_ComposeOrderQuery(t *testing.T) {
 	})
 }
 
-func TestPaginationEntity_CalculatePage(t *testing.T) {
+func TestPaginationModel_CalculatePage(t *testing.T) {
 	Convey("計算搜索數量", t, func() {
-		pagination := entity.Pagination{
+		pagination := model.Pagination{
 			PageSize: 10,
 		}
 
@@ -47,14 +47,14 @@ func TestPaginationEntity_CalculatePage(t *testing.T) {
 	})
 }
 
-func TestPaginationEntity_Format(t *testing.T) {
+func TestPaginationModel_Format(t *testing.T) {
 	Convey("結構化搜索結果", t, func() {
 		type testStruct struct {
 			val int
 		}
 
 		testData := testStruct{3}
-		pagination := entity.Pagination{
+		pagination := model.Pagination{
 			Page:     1,
 			PageSize: 1,
 			LastPage: 1,
@@ -62,8 +62,8 @@ func TestPaginationEntity_Format(t *testing.T) {
 			Sort:     "asc",
 		}
 
-		pageRes := entity.PageResponse{
-			Meta: entity.Pagination{
+		pageRes := model.PageResponse{
+			Meta: model.Pagination{
 				Page:     pagination.Page,
 				PageSize: pagination.PageSize,
 				Total:    pagination.Total,

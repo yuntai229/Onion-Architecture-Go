@@ -1,7 +1,7 @@
 package app
 
 import (
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/domain/ports"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
@@ -10,21 +10,21 @@ import (
 )
 
 type UserApp struct {
-	config   *entity.Config
+	config   *model.Config
 	UserRepo ports.UserRepo
 	Logger   *zap.Logger
 }
 
-func NewUserApp(config *entity.Config, userRepo ports.UserRepo, logger *zap.Logger) ports.UserApp {
+func NewUserApp(config *model.Config, userRepo ports.UserRepo, logger *zap.Logger) ports.UserApp {
 	return &UserApp{config, userRepo, logger}
 }
 
-func (app *UserApp) Signup(requestId string, requestBody dto.SignupRequest) *entity.ErrorMessage {
+func (app *UserApp) Signup(requestId string, requestBody dto.SignupRequest) *model.ErrorMessage {
 	app.Logger.Info("[App][UserApp][Signup] Entry",
 		zap.String("requestId", requestId),
 	)
 
-	userData := entity.NewUsersEntity()
+	userData := model.NewUsersModel()
 	userData.Name = requestBody.Name
 	userData.Email = requestBody.Email
 	userData.HashPassword = userData.SetHashPassword(requestBody.Password)
@@ -35,7 +35,7 @@ func (app *UserApp) Signup(requestId string, requestBody dto.SignupRequest) *ent
 	return nil
 }
 
-func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (string, *entity.ErrorMessage) {
+func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (string, *model.ErrorMessage) {
 	app.Logger.Info("[App][UserApp][Login] Entry",
 		zap.String("requestId", requestId),
 	)
@@ -47,10 +47,10 @@ func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (strin
 	}
 
 	if validateResult := app.validatePassword(requestId, userData.HashPassword, requestBody.Password); !validateResult {
-		return "", &entity.PasswordIncorrectErr
+		return "", &model.PasswordIncorrectErr
 	}
 
-	authClaims := entity.NewJwtEntity()
+	authClaims := model.NewJwtModel()
 	authClaims.UserID = userData.ID
 	jwt, jwtErr := authClaims.GenJwt(app.config.JwtConfig.Key)
 	if jwtErr != nil {
@@ -58,7 +58,7 @@ func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (strin
 			zap.String("requestId", requestId),
 			zap.Error(jwtErr),
 		)
-		return "", &entity.TokenGenFail
+		return "", &model.TokenGenFail
 	}
 
 	return jwt, nil

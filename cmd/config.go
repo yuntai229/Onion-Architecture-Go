@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func InitAppEnv() *entity.Config {
+func InitAppEnv() *model.Config {
 	switch env := os.Getenv("APP_ENV"); env {
 	// case "uat":
 	// 	return uatEnvironment(env)
@@ -37,32 +37,32 @@ func InitRunningMode() {
 	}
 }
 
-func defaultEnvironment(env string) *entity.Config {
+func defaultEnvironment(env string) *model.Config {
 	path := "./env/local/"
 
-	var rdbEntity entity.RdbConfig
+	var rdbModel model.RdbConfig
 	rdbConfig := viper.New()
 	rdbConfig.SetConfigName("rdb")
 	rdbConfig.SetConfigType("yaml")
 	rdbConfig.AddConfigPath(path)
 	rdbConfig.ReadInConfig()
-	rdbConfig.Unmarshal(&rdbEntity)
+	rdbConfig.Unmarshal(&rdbModel)
 
-	var jwtEntity entity.JwtConfig
+	var jwtModel model.JwtConfig
 	jwtConfig := viper.New()
 	jwtConfig.SetConfigName("jwt")
 	jwtConfig.SetConfigType("yaml")
 	jwtConfig.AddConfigPath(path)
 	jwtConfig.ReadInConfig()
-	jwtConfig.Unmarshal(&jwtEntity)
+	jwtConfig.Unmarshal(&jwtModel)
 
-	return &entity.Config{
+	return &model.Config{
 		Env:       env,
-		RdbConfig: rdbEntity,
-		JwtConfig: jwtEntity,
+		RdbConfig: rdbModel,
+		JwtConfig: jwtModel,
 	}
 }
 
-func uatEnvironment(env string) *entity.Config {
-	return &entity.Config{}
+func uatEnvironment(env string) *model.Config {
+	return &model.Config{}
 }

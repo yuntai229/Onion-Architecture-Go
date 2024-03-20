@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/presentation/api/middleware"
 	"reflect"
 	"testing"
@@ -26,7 +26,7 @@ func TestJwtAuthMiddleware_InjectRequestId(t *testing.T) {
 
 	Convey("request id 注入", t, func() {
 		router.GET("/requestId", logTraceMiddleware.InjectRequestId(), func(ctx *gin.Context) {
-			res := entity.NewResEntity().ResWithSucc(nil)
+			res := model.NewResModel().ResWithSucc(nil)
 			requestId := fmt.Sprintf("%v", ctx.Value("requestId"))
 
 			ctxRequestId = requestId
@@ -38,7 +38,7 @@ func TestJwtAuthMiddleware_InjectRequestId(t *testing.T) {
 		router.ServeHTTP(resp, req)
 
 		resBody, _ := io.ReadAll(resp.Body)
-		var resultResBody entity.ResSucc
+		var resultResBody model.ResSucc
 		_ = json.Unmarshal(resBody, &resultResBody)
 
 		So(reflect.TypeOf(resp.Header()["X-Request-Id"][0]).Kind(), ShouldEqual, reflect.String)

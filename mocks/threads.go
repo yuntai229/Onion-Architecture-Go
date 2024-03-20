@@ -5,7 +5,7 @@
 package mock_ports
 
 import (
-	entity "onion-architecrure-go/domain/entity"
+	model "onion-architecrure-go/domain/model"
 	dto "onion-architecrure-go/dto"
 	reflect "reflect"
 
@@ -36,10 +36,10 @@ func (m *MockThreadRepo) EXPECT() *MockThreadRepoMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockThreadRepo) Create(requestId string, threadData entity.Threads) *entity.ErrorMessage {
+func (m *MockThreadRepo) Create(requestId string, threadData model.Threads) *model.ErrorMessage {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", requestId, threadData)
-	ret0, _ := ret[0].(*entity.ErrorMessage)
+	ret0, _ := ret[0].(*model.ErrorMessage)
 	return ret0
 }
 
@@ -50,11 +50,11 @@ func (mr *MockThreadRepoMockRecorder) Create(requestId, threadData interface{}) 
 }
 
 // GetByUserId mocks base method.
-func (m *MockThreadRepo) GetByUserId(requestId string, pagination *entity.Pagination, userId uint) ([]entity.Threads, *entity.ErrorMessage) {
+func (m *MockThreadRepo) GetByUserId(requestId string, pagination *model.Pagination, userId uint) ([]model.Threads, *model.ErrorMessage) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByUserId", requestId, pagination, userId)
-	ret0, _ := ret[0].([]entity.Threads)
-	ret1, _ := ret[1].(*entity.ErrorMessage)
+	ret0, _ := ret[0].([]model.Threads)
+	ret1, _ := ret[1].(*model.ErrorMessage)
 	return ret0, ret1
 }
 
@@ -88,10 +88,10 @@ func (m *MockThreadApp) EXPECT() *MockThreadAppMockRecorder {
 }
 
 // CreatePost mocks base method.
-func (m *MockThreadApp) CreatePost(requestId string, requestBody dto.PostRequest, userId uint) *entity.ErrorMessage {
+func (m *MockThreadApp) CreatePost(requestId string, requestBody dto.PostRequest, userId uint) *model.ErrorMessage {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatePost", requestId, requestBody, userId)
-	ret0, _ := ret[0].(*entity.ErrorMessage)
+	ret0, _ := ret[0].(*model.ErrorMessage)
 	return ret0
 }
 
@@ -102,11 +102,11 @@ func (mr *MockThreadAppMockRecorder) CreatePost(requestId, requestBody, userId i
 }
 
 // GetPost mocks base method.
-func (m *MockThreadApp) GetPost(requestId string, pagination *entity.Pagination, params dto.GetPostRequest) ([]entity.Threads, *entity.ErrorMessage) {
+func (m *MockThreadApp) GetPost(requestId string, pagination *model.Pagination, params dto.GetPostRequest) ([]model.Threads, *model.ErrorMessage) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPost", requestId, pagination, params)
-	ret0, _ := ret[0].([]entity.Threads)
-	ret1, _ := ret[1].(*entity.ErrorMessage)
+	ret0, _ := ret[0].([]model.Threads)
+	ret1, _ := ret[1].(*model.ErrorMessage)
 	return ret0, ret1
 }
 

@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"onion-architecrure-go/extend"
@@ -13,10 +13,10 @@ type Users struct {
 	HashPassword string
 }
 
-func NewUsersEntity() Users {
+func NewUsersModel() Users {
 	return Users{}
 }
 
-func (entity Users) SetHashPassword(unhashPassword string) string {
+func (model Users) SetHashPassword(unhashPassword string) string {
 	return extend.Helper.Hash(unhashPassword)
 }

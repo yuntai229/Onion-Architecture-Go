@@ -1,16 +1,16 @@
 package ports
 
 import (
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 )
 
 type UserApp interface {
-	Signup(requestId string, requestBody dto.SignupRequest) *entity.ErrorMessage
-	Login(requestId string, requestBody dto.LoginRequest) (string, *entity.ErrorMessage)
+	Signup(requestId string, requestBody dto.SignupRequest) *model.ErrorMessage
+	Login(requestId string, requestBody dto.LoginRequest) (string, *model.ErrorMessage)
 }
 
 type UserRepo interface {
-	Create(requestId string, userData entity.Users) *entity.ErrorMessage
-	GetByMail(requestId string, mail string) (entity.Users, *entity.ErrorMessage)
+	Create(requestId string, userData model.Users) *model.ErrorMessage
+	GetByMail(requestId string, mail string) (model.Users, *model.ErrorMessage)
 }

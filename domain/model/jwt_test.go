@@ -1,10 +1,10 @@
-package entity_test
+package model_test
 
 import (
 	"encoding/json"
 	"errors"
 	"onion-architecrure-go/cmd"
-	"onion-architecrure-go/domain/entity"
+	"onion-architecrure-go/domain/model"
 	"reflect"
 	"testing"
 
@@ -13,18 +13,18 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestJwtEntity_NewJwtEntity(t *testing.T) {
+func TestJwtModel_NewJwtModel(t *testing.T) {
 	Convey("New Instance", t, func() {
-		jwtEntity := entity.UserAuthClaims{}
-		testObj := entity.NewJwtEntity()
+		jwtModel := model.UserAuthClaims{}
+		testObj := model.NewJwtModel()
 
-		So(*testObj, ShouldEqual, jwtEntity)
+		So(*testObj, ShouldEqual, jwtModel)
 	})
 }
 
-func TestJwtEntity_VerifyJwt(t *testing.T) {
+func TestJwtModel_VerifyJwt(t *testing.T) {
 	config := cmd.InitAppEnv()
-	var authClaims entity.UserAuthClaims
+	var authClaims model.UserAuthClaims
 	jwtToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUxMzQ4NzcsInN1YiI6IlVzZXIiLCJVc2VySUQiOjF9.tPfCaNFUG-X8lu5ABtNot3sy_7FEV90PNeTtToA0adOkH4PU_hAXCbiP7BRzTpAWL-gPNaD67DrkrVdaCnFahw"
 	Convey("token 驗證成功", t, func() {
 		var Parser jwt.Parser
@@ -52,16 +52,16 @@ func TestJwtEntity_VerifyJwt(t *testing.T) {
 	})
 }
 
-func TestJwtEntity_GenJwt(t *testing.T) {
+func TestJwtModel_GenJwt(t *testing.T) {
 	config := cmd.InitAppEnv()
 	Convey("token 生成成功", t, func() {
-		var authClaims entity.UserAuthClaims
+		var authClaims model.UserAuthClaims
 		token, _ := authClaims.GenJwt(config.JwtConfig.Key)
 		isValid, _ := authClaims.VerifyJwt(config.JwtConfig.Key, token)
 		So(isValid, ShouldBeTrue)
 	})
 	Convey("token 生成失敗", t, func() {
-		var authClaims entity.UserAuthClaims
+		var authClaims model.UserAuthClaims
 		errorString := "error testing"
 		monkey.Patch(json.Marshal, func(v any) ([]byte, error) {
 			return []byte{}, errors.New(errorString)

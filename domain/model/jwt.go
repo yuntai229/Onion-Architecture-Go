@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"time"
@@ -11,22 +11,22 @@ type UserAuthClaims struct {
 	UserID uint
 }
 
-func NewJwtEntity() *UserAuthClaims {
+func NewJwtModel() *UserAuthClaims {
 	return &UserAuthClaims{}
 }
 
-func (entity *UserAuthClaims) VerifyJwt(key, tokenString string) (bool, *UserAuthClaims) {
-	token, err := jwt.ParseWithClaims(tokenString, entity, func(token *jwt.Token) (interface{}, error) {
+func (model *UserAuthClaims) VerifyJwt(key, tokenString string) (bool, *UserAuthClaims) {
+	token, err := jwt.ParseWithClaims(tokenString, model, func(token *jwt.Token) (interface{}, error) {
 		return []byte(key), nil
 	})
 
 	if err != nil || !token.Valid {
 		return false, nil
 	}
-	return true, entity
+	return true, model
 }
 
-func (entity *UserAuthClaims) GenJwt(key string) (string, error) {
+func (model *UserAuthClaims) GenJwt(key string) (string, error) {
 	var jwtKey = []byte(key)
 	expiresAt := time.Now().Add(24 * time.Hour).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, UserAuthClaims{
@@ -34,7 +34,7 @@ func (entity *UserAuthClaims) GenJwt(key string) (string, error) {
 			Subject:   "User",
 			ExpiresAt: expiresAt,
 		},
-		UserID: entity.UserID,
+		UserID: model.UserID,
 	})
 	tokenString, err := token.SignedString(jwtKey)
 	return tokenString, err

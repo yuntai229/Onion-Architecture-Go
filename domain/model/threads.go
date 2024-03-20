@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"gorm.io/gorm"
@@ -11,6 +11,6 @@ type Threads struct {
 	Users      Users `gorm:"foreignKey:UserId"`
 }
 
-func NewThreadsEntity() Threads {
+func NewThreadsModel() Threads {
 	return Threads{}
 }
