@@ -12,7 +12,7 @@ I'm glad that you're reading! If you found this project is useful or mindblow fo
 
 ### Architecture
 
-![Onion Architecture Concept](https://raw.githubusercontent.com/yuntai229/Onion-Architecture-Go/develop/Onion%20Architecture.drawio.png)
+![Onion Architecture Concept](https://raw.githubusercontent.com/yuntai229/Onion-Architecture-Go/master/Onion%20Architecture.drawio.png)
 
 * The left side is input side, where the data resource from. The **Presentation** layer is acted as input.
 * The right side is output side, where the side app drive. The **Infrastructure** layer is acted as output.
@@ -44,7 +44,7 @@ All of these are folders. The app entry point is **main.go**
 
 ### Relation
 
-![Onion Architecture Relation](https://raw.githubusercontent.com/yuntai229/Onion-Architecture-Go/develop/Onion%20Architecture-relation.drawio.png)
+![Onion Architecture Relation](https://raw.githubusercontent.com/yuntai229/Onion-Architecture-Go/master/Onion%20Architecture-relation.drawio.png)
 
 ## How to Run
 
