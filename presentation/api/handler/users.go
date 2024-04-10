@@ -21,7 +21,7 @@ func NewUserHandler(userApp ports.UserApp, logger *zap.Logger) *UserHandler {
 }
 
 func (handler *UserHandler) Signup(ctx *gin.Context) {
-	requestId := fmt.Sprintf("%v", ctx.Value("RequestId"))
+	requestId := fmt.Sprintf("%v", ctx.Value("requestId"))
 	var requestBody dto.SignupRequest
 
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
