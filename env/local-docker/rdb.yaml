@@ -1,0 +1,9 @@
+---
+
+user: root
+password: pass
+host: mysql
+port: 3307
+db: example
+charset: utf8mb4
+timeout: 12s

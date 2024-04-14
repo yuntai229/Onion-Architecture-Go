@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"onion-architecrure-go/domain/model"
 	"os"
 
@@ -13,9 +14,11 @@ func InitAppEnv() *model.Config {
 	switch env := os.Getenv("APP_ENV"); env {
 	// case "uat":
 	// 	return uatEnvironment(env)
+	case "local-docker":
+		return localEnvironment(env)
 	default:
 		env = "local"
-		return defaultEnvironment(env)
+		return localEnvironment(env)
 	}
 }
 
@@ -37,9 +40,8 @@ func InitRunningMode() {
 	}
 }
 
-func defaultEnvironment(env string) *model.Config {
-	path := "./env/local/"
-
+func localEnvironment(env string) *model.Config {
+	path := fmt.Sprintf("./env/%s/", env)
 	var rdbModel model.RdbConfig
 	rdbConfig := viper.New()
 	rdbConfig.SetConfigName("rdb")
