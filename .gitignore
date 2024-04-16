@@ -3,3 +3,6 @@ logs/
 
 # Mac file system
 .DS_Store
+
+# air hot reload binary
+tmp/

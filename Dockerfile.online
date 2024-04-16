@@ -22,7 +22,6 @@ RUN apk update && apk upgrade && \
 WORKDIR /app
 
 COPY --from=builder /app/main .
-COPY --from=builder /app/env /app/env
 
 EXPOSE 8080
 

@@ -1,6 +1,22 @@
 version: '3.8'
 
 services:
+  app: 
+    build:
+      dockerfile: Dockerfile.local
+    container_name: onion-architecture-app
+    depends_on: 
+      mysql:
+        condition: service_healthy
+    environment:
+      - APP_ENV=local-docker
+    ports:
+      - "8080:8080"
+    networks:
+      - my-network
+    volumes:
+    - ./:/app
+
   mysql:
     image: mysql:latest
     container_name: onion-architecture-mysql
@@ -16,18 +32,6 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
       retries: 10
-    networks:
-      - my-network
-  app: 
-    build: .  # Build the Go app image from the current directory
-    container_name: onion-architecture-app
-    depends_on: 
-      mysql:
-        condition: service_healthy
-    environment:
-      - APP_ENV=local-docker
-    ports:
-      - "8080:8080"  # Map app's port 8080 to host's port 8080
     networks:
       - my-network
 
