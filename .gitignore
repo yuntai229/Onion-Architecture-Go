@@ -6,3 +6,6 @@ logs/
 
 # air hot reload binary
 tmp/
+
+# migration folder
+migrations/
