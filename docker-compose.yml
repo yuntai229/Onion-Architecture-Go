@@ -15,7 +15,7 @@ services:
     networks:
       - my-network
     volumes:
-    - ./:/app
+      - ./:/app
 
   mysql:
     image: mysql:latest
