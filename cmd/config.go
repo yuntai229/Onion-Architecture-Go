@@ -42,6 +42,14 @@ func InitRunningMode() {
 
 func localEnvironment(env string) *model.Config {
 	path := fmt.Sprintf("./env/%s/", env)
+	var appModel model.AppConfig
+	appConfig := viper.New()
+	appConfig.SetConfigName("app")
+	appConfig.SetConfigType("yaml")
+	appConfig.AddConfigPath(path)
+	appConfig.ReadInConfig()
+	appConfig.Unmarshal(&appModel)
+
 	var rdbModel model.RdbConfig
 	rdbConfig := viper.New()
 	rdbConfig.SetConfigName("rdb")
@@ -60,6 +68,7 @@ func localEnvironment(env string) *model.Config {
 
 	return &model.Config{
 		Env:       env,
+		AppConfig: appModel,
 		RdbConfig: rdbModel,
 		JwtConfig: jwtModel,
 	}

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"net/url"
+	"onion-architecrure-go/domain/model"
 	"time"
 
 	"github.com/natefinch/lumberjack"
@@ -15,7 +16,7 @@ type lumberjackSink struct {
 
 func (lumberjackSink) Sync() error { return nil }
 
-func InitLog() *zap.Logger {
+func InitLog(appConfig model.AppConfig) *zap.Logger {
 	zap.RegisterSink("lumberjack", func(u *url.URL) (zap.Sink, error) {
 		return lumberjackSink{
 			Logger: &lumberjack.Logger{
@@ -31,9 +32,8 @@ func InitLog() *zap.Logger {
 
 	config.OutputPaths = append(config.OutputPaths, "lumberjack:logs/ONION-ARCHITECTURE-GO.log")
 	logger, _ := config.Build()
+	logger = logger.With(zap.String("Version", appConfig.Version))
 
-	// app version
-	// logger.With()
 	defer logger.Sync()
 
 	return logger

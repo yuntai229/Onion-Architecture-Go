@@ -9,7 +9,7 @@ import (
 func main() {
 	config := cmd.InitAppEnv()
 	db := cmd.InitDb(config)
-	logger := cmd.InitLog()
+	logger := cmd.InitLog(config.AppConfig)
 	handlers, middlewares := cmd.InitApp(config, db, logger)
 
 	server := &http.Server{
@@ -18,6 +18,8 @@ func main() {
 		ReadTimeout:  60 * time.Second,
 		WriteTimeout: 60 * time.Second,
 	}
+
+	logger.Info("Server Ready")
 
 	server.ListenAndServe()
 }
