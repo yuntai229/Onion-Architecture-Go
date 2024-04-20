@@ -4,11 +4,11 @@ type Config struct {
 	Env       string
 	AppConfig AppConfig
 	RdbConfig RdbConfig
-	JwtConfig JwtConfig
 }
 
 type AppConfig struct {
 	Version string
+	JwtKey  string
 }
 
 type RdbConfig struct {

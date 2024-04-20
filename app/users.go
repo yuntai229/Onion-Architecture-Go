@@ -52,7 +52,7 @@ func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (strin
 
 	authClaims := model.NewJwtModel()
 	authClaims.UserID = userData.ID
-	jwt, jwtErr := authClaims.GenJwt(app.config.JwtConfig.Key)
+	jwt, jwtErr := authClaims.GenJwt(app.config.AppConfig.JwtKey)
 	if jwtErr != nil {
 		app.Logger.Error("[App][UserApp][Login] Token gen error",
 			zap.String("requestId", requestId),

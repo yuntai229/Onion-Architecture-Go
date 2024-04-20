@@ -36,17 +36,17 @@ func TestJwtModel_VerifyJwt(t *testing.T) {
 		})
 		defer monkey.UnpatchAll()
 
-		isValid, _ := authClaims.VerifyJwt(config.JwtConfig.Key, jwtToken)
+		isValid, _ := authClaims.VerifyJwt(config.AppConfig.JwtKey, jwtToken)
 		So(isValid, ShouldBeTrue)
 	})
 	Convey("token 驗證失敗", t, func() {
 		testErrString := "err str"
 		Convey("token 失效", func() {
-			isValid, _ := authClaims.VerifyJwt(config.JwtConfig.Key, testErrString)
+			isValid, _ := authClaims.VerifyJwt(config.AppConfig.JwtKey, testErrString)
 			So(isValid, ShouldBeFalse)
 		})
 		Convey("token 無效 (verify 錯誤)", func() {
-			isValid, _ := authClaims.VerifyJwt(config.JwtConfig.Key, testErrString)
+			isValid, _ := authClaims.VerifyJwt(config.AppConfig.JwtKey, testErrString)
 			So(isValid, ShouldBeFalse)
 		})
 	})
@@ -56,8 +56,8 @@ func TestJwtModel_GenJwt(t *testing.T) {
 	config := cmd.InitAppEnv()
 	Convey("token 生成成功", t, func() {
 		var authClaims model.UserAuthClaims
-		token, _ := authClaims.GenJwt(config.JwtConfig.Key)
-		isValid, _ := authClaims.VerifyJwt(config.JwtConfig.Key, token)
+		token, _ := authClaims.GenJwt(config.AppConfig.JwtKey)
+		isValid, _ := authClaims.VerifyJwt(config.AppConfig.JwtKey, token)
 		So(isValid, ShouldBeTrue)
 	})
 	Convey("token 生成失敗", t, func() {
@@ -67,7 +67,7 @@ func TestJwtModel_GenJwt(t *testing.T) {
 			return []byte{}, errors.New(errorString)
 		})
 		defer monkey.UnpatchAll()
-		_, err := authClaims.GenJwt(config.JwtConfig.Key)
+		_, err := authClaims.GenJwt(config.AppConfig.JwtKey)
 		So(err, ShouldEqual, errorString)
 	})
 }

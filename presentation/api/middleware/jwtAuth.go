@@ -41,7 +41,7 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 			zap.String("tokenString", tokenString),
 		)
 
-		isValid, claims := model.NewJwtModel().VerifyJwt(middleware.Config.JwtConfig.Key, tokenString)
+		isValid, claims := model.NewJwtModel().VerifyJwt(middleware.Config.AppConfig.JwtKey, tokenString)
 		if !isValid {
 			newErr := model.TokenInvalidErr
 			res := model.NewResModel().ResWithFail(newErr)

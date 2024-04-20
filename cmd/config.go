@@ -58,19 +58,10 @@ func localEnvironment(env string) *model.Config {
 	rdbConfig.ReadInConfig()
 	rdbConfig.Unmarshal(&rdbModel)
 
-	var jwtModel model.JwtConfig
-	jwtConfig := viper.New()
-	jwtConfig.SetConfigName("jwt")
-	jwtConfig.SetConfigType("yaml")
-	jwtConfig.AddConfigPath(path)
-	jwtConfig.ReadInConfig()
-	jwtConfig.Unmarshal(&jwtModel)
-
 	return &model.Config{
 		Env:       env,
 		AppConfig: appModel,
 		RdbConfig: rdbModel,
-		JwtConfig: jwtModel,
 	}
 }
 
