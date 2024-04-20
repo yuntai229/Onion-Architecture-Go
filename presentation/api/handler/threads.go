@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
@@ -27,7 +28,7 @@ func (handler *ThreadHandler) CreatePost(ctx *gin.Context) {
 	var requestBody dto.PostRequest
 
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
-		newErr := model.MissingFieldErr
+		newErr := constant.MissingFieldErr
 		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][ThreadHandler][CreatePost] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
@@ -40,7 +41,7 @@ func (handler *ThreadHandler) CreatePost(ctx *gin.Context) {
 
 	userId, ok := ctx.Get("UserId")
 	if !ok {
-		newErr := model.TokenInvalidErr
+		newErr := constant.TokenInvalidErr
 		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Error("[ApiHandler][ThreadHandler][CreatePost] Request end - Jwt Error",
 			zap.String("requestId", requestId),
@@ -73,7 +74,7 @@ func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 	var params dto.GetPostRequest
 
 	if err := ctx.ShouldBind(&params); err != nil {
-		newErr := model.MissingFieldErr
+		newErr := constant.MissingFieldErr
 		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Error("[ApiHandler][ThreadHandler][GetPost] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
@@ -86,7 +87,7 @@ func (handler *ThreadHandler) GetPost(ctx *gin.Context) {
 
 	userId, ok := ctx.Get("UserId")
 	if !ok {
-		newErr := model.TokenInvalidErr
+		newErr := constant.TokenInvalidErr
 		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Error("[ApiHandler][ThreadHandler][GetPost] Request end - Jwt Error",
 			zap.String("requestId", requestId),

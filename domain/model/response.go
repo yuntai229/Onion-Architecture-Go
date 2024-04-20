@@ -1,5 +1,7 @@
 package model
 
+import "onion-architecrure-go/domain/constant"
+
 type ResponseModel struct{}
 
 type ResSucc struct {
@@ -26,7 +28,7 @@ func (model ResponseModel) ResWithSucc(data any) ResSucc {
 	return res
 }
 
-func (model ResponseModel) ResWithFail(err ErrorMessage) ResFail {
+func (model ResponseModel) ResWithFail(err constant.ErrorMessage) ResFail {
 	res := ResFail{
 		Code:    err.Code,
 		Message: err.Message,

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
@@ -19,7 +20,7 @@ func NewUserApp(config *model.Config, userRepo ports.UserRepo, logger *zap.Logge
 	return &UserApp{config, userRepo, logger}
 }
 
-func (app *UserApp) Signup(requestId string, requestBody dto.SignupRequest) *model.ErrorMessage {
+func (app *UserApp) Signup(requestId string, requestBody dto.SignupRequest) *constant.ErrorMessage {
 	app.Logger.Info("[App][UserApp][Signup] Entry",
 		zap.String("requestId", requestId),
 	)
@@ -35,7 +36,7 @@ func (app *UserApp) Signup(requestId string, requestBody dto.SignupRequest) *mod
 	return nil
 }
 
-func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (string, *model.ErrorMessage) {
+func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (string, *constant.ErrorMessage) {
 	app.Logger.Info("[App][UserApp][Login] Entry",
 		zap.String("requestId", requestId),
 	)
@@ -47,7 +48,7 @@ func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (strin
 	}
 
 	if validateResult := app.validatePassword(requestId, userData.HashPassword, requestBody.Password); !validateResult {
-		return "", &model.PasswordIncorrectErr
+		return "", &constant.PasswordIncorrectErr
 	}
 
 	authClaims := model.NewJwtModel()
@@ -58,7 +59,7 @@ func (app *UserApp) Login(requestId string, requestBody dto.LoginRequest) (strin
 			zap.String("requestId", requestId),
 			zap.Error(jwtErr),
 		)
-		return "", &model.TokenGenFail
+		return "", &constant.TokenGenFail
 	}
 
 	return jwt, nil

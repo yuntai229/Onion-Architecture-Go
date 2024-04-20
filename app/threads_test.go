@@ -2,6 +2,7 @@ package app_test
 
 import (
 	"onion-architecrure-go/app"
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	mock_ports "onion-architecrure-go/mocks"
@@ -42,12 +43,12 @@ func TestThreadApp_CreatePost(t *testing.T) {
 
 	Convey("Db Connect Error", t, func() {
 		gomock.InOrder(
-			mockThreadRepo.EXPECT().Create(gomock.Any(), threadData).Return(&model.DbConnectErr),
+			mockThreadRepo.EXPECT().Create(gomock.Any(), threadData).Return(&constant.DbConnectErr),
 		)
 		requestData := dto.PostRequest{
 			Content: "test",
 		}
-		errData := &model.DbConnectErr
+		errData := &constant.DbConnectErr
 
 		err := app.CreatePost(requestId, requestData, userId)
 		So(err, ShouldEqual, errData)
@@ -117,10 +118,10 @@ func TestThreadApp_GetPost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadRepo.EXPECT().GetByUserId(gomock.Any(), &pageParams, userId).Return(res, &model.DbConnectErr),
+			mockThreadRepo.EXPECT().GetByUserId(gomock.Any(), &pageParams, userId).Return(res, &constant.DbConnectErr),
 		)
 		_, err := app.GetPost(requestId, &pageParams, requestData)
-		errData := &model.DbConnectErr
+		errData := &constant.DbConnectErr
 		So(err, ShouldEqual, errData)
 	})
 

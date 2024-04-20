@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"onion-architecrure-go/cmd"
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/presentation/api/middleware"
 	"reflect"
@@ -64,7 +65,7 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 	Convey("驗證失敗", t, func() {
 		Convey("沒有 token", func() {
 			router.GET("/jwt/missingToken", jwtMiddelware.Auth(), func(ctx *gin.Context) {
-				newErr := model.MissingTokenErr
+				newErr := constant.MissingTokenErr
 				res := model.NewResModel().ResWithFail(newErr)
 				ctx.JSON(newErr.HttpCode, res)
 			})
@@ -77,13 +78,13 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 			var resultResBody model.ResFail
 			_ = json.Unmarshal(resBody, &resultResBody)
 
-			So(resp.Code, ShouldEqual, model.MissingTokenErr.HttpCode)
-			So(resultResBody.Code, ShouldEqual, model.MissingTokenErr.Code)
-			So(resultResBody.Message, ShouldEqual, model.MissingTokenErr.Message)
+			So(resp.Code, ShouldEqual, constant.MissingTokenErr.HttpCode)
+			So(resultResBody.Code, ShouldEqual, constant.MissingTokenErr.Code)
+			So(resultResBody.Message, ShouldEqual, constant.MissingTokenErr.Message)
 		})
 		Convey("無效 token", func() {
 			router.GET("/jwt/invalidToken", jwtMiddelware.Auth(), func(ctx *gin.Context) {
-				newErr := model.TokenInvalidErr
+				newErr := constant.TokenInvalidErr
 				res := model.NewResModel().ResWithFail(newErr)
 				ctx.JSON(newErr.HttpCode, res)
 			})
@@ -103,9 +104,9 @@ func TestJwtAuthMiddleware_Auth(t *testing.T) {
 			var resultResBody model.ResFail
 			_ = json.Unmarshal(respBody, &resultResBody)
 
-			So(resp.Code, ShouldEqual, model.TokenInvalidErr.HttpCode)
-			So(resultResBody.Code, ShouldEqual, model.TokenInvalidErr.Code)
-			So(resultResBody.Message, ShouldEqual, model.TokenInvalidErr.Message)
+			So(resp.Code, ShouldEqual, constant.TokenInvalidErr.HttpCode)
+			So(resultResBody.Code, ShouldEqual, constant.TokenInvalidErr.Code)
+			So(resultResBody.Message, ShouldEqual, constant.TokenInvalidErr.Message)
 		})
 
 	})

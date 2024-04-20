@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"strings"
 
@@ -24,7 +25,7 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 
 		tokenArr := ctx.Request.Header["Authorization"]
 		if len(tokenArr) == 0 {
-			newErr := model.MissingTokenErr
+			newErr := constant.MissingTokenErr
 			res := model.NewResModel().ResWithFail(newErr)
 			middleware.Logger.Info("[ApiMiddleware][jwtAuth][Auth] Request end - Missing Token",
 				zap.String("requestId", requestId),
@@ -43,7 +44,7 @@ func (middleware *JwtAuthMiddleware) Auth() gin.HandlerFunc {
 
 		isValid, claims := model.NewJwtModel().VerifyJwt(middleware.Config.AppConfig.JwtKey, tokenString)
 		if !isValid {
-			newErr := model.TokenInvalidErr
+			newErr := constant.TokenInvalidErr
 			res := model.NewResModel().ResWithFail(newErr)
 			middleware.Logger.Info("[ApiMiddleware][jwtAuth][Auth] Request end - Token auth fail",
 				zap.String("requestId", requestId),

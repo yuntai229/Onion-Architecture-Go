@@ -1,6 +1,7 @@
 package model_test
 
 import (
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"testing"
 
@@ -90,7 +91,7 @@ func TestResponseModel_ResWithSucc(t *testing.T) {
 
 func TestResponseModel_ResWithFail(t *testing.T) {
 	Convey("響應失敗", t, func() {
-		err := model.NotFoundErr
+		err := constant.NotFoundErr
 		res := model.ResFail{
 			Code:    err.Code,
 			Message: err.Message,

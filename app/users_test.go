@@ -4,6 +4,7 @@ import (
 	"errors"
 	"onion-architecrure-go/app"
 	"onion-architecrure-go/cmd"
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/extend"
@@ -52,20 +53,20 @@ func TestUsersApp_Signup(t *testing.T) {
 
 		Convey("失敗 - 帳號已存在", func() {
 			gomock.InOrder(
-				mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&model.UserExistErr),
+				mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&constant.UserExistErr),
 			)
 			err := app.Signup(requestId, requestData)
-			errData := &model.UserExistErr
+			errData := &constant.UserExistErr
 			So(err, ShouldEqual, errData)
 		})
 	})
 
 	Convey("Db Connect Error", t, func() {
 		gomock.InOrder(
-			mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&model.DbConnectErr),
+			mockUserRepo.EXPECT().Create(gomock.Any(), userData).Return(&constant.DbConnectErr),
 		)
 		err := app.Signup(requestId, requestData)
-		errData := &model.DbConnectErr
+		errData := &constant.DbConnectErr
 		So(err, ShouldEqual, errData)
 	})
 }
@@ -138,7 +139,7 @@ func TestUsersApp_Login(t *testing.T) {
 			)
 			token, err := app.Login(requestId, requestBody)
 			So(token, ShouldEqual, "")
-			So(err, ShouldEqual, &model.PasswordIncorrectErr)
+			So(err, ShouldEqual, &constant.PasswordIncorrectErr)
 		})
 
 	})
@@ -150,11 +151,11 @@ func TestUsersApp_Login(t *testing.T) {
 		}
 		var user model.Users
 		gomock.InOrder(
-			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &model.UserNotFoundErr),
+			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &constant.UserNotFoundErr),
 		)
 		token, err := app.Login(requestId, requestBody)
 		So(token, ShouldEqual, "")
-		So(err, ShouldEqual, &model.UserNotFoundErr)
+		So(err, ShouldEqual, &constant.UserNotFoundErr)
 	})
 
 	Convey("Jwt gen error", t, func() {
@@ -175,7 +176,7 @@ func TestUsersApp_Login(t *testing.T) {
 		})
 		token, err := app.Login(requestId, requestBody)
 		So(token, ShouldEqual, "")
-		So(err, ShouldEqual, &model.TokenGenFail)
+		So(err, ShouldEqual, &constant.TokenGenFail)
 	})
 
 	Convey("Db Connect Error", t, func() {
@@ -185,9 +186,9 @@ func TestUsersApp_Login(t *testing.T) {
 		}
 		user = model.Users{}
 		gomock.InOrder(
-			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &model.DbConnectErr),
+			mockUserRepo.EXPECT().GetByMail(gomock.Any(), "1").Return(user, &constant.DbConnectErr),
 		)
-		errData := &model.DbConnectErr
+		errData := &constant.DbConnectErr
 		token, err := app.Login(requestId, requestBody)
 		So(token, ShouldEqual, "")
 		So(err, ShouldEqual, errData)

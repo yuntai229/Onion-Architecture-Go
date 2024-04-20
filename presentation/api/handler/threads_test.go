@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"onion-architecrure-go/cmd"
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	mock_ports "onion-architecrure-go/mocks"
@@ -63,9 +64,9 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.MissingFieldErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.MissingFieldErr.Code)
-		So(resultBody.Message, ShouldEqual, model.MissingFieldErr.Message)
+		So(resp.Code, ShouldEqual, constant.MissingFieldErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.MissingFieldErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.MissingFieldErr.Message)
 	})
 
 	Convey("ctx get userid error", t, func() {
@@ -83,9 +84,9 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.TokenInvalidErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.TokenInvalidErr.Code)
-		So(resultBody.Message, ShouldEqual, model.TokenInvalidErr.Message)
+		So(resp.Code, ShouldEqual, constant.TokenInvalidErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.TokenInvalidErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.TokenInvalidErr.Message)
 	})
 
 	Convey("新增貼文成功", t, func() {
@@ -119,7 +120,7 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadApp.EXPECT().CreatePost(gomock.Any(), postRequest, userId).Return(&model.DbConnectErr),
+			mockThreadApp.EXPECT().CreatePost(gomock.Any(), postRequest, userId).Return(&constant.DbConnectErr),
 		)
 
 		jsons, _ := json.Marshal(postRequest)
@@ -132,9 +133,9 @@ func TestThreadsHandler_CreatePost(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.DbConnectErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.DbConnectErr.Code)
-		So(resultBody.Message, ShouldEqual, model.DbConnectErr.Message)
+		So(resp.Code, ShouldEqual, constant.DbConnectErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.DbConnectErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.DbConnectErr.Message)
 	})
 }
 
@@ -191,9 +192,9 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.TokenInvalidErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.TokenInvalidErr.Code)
-		So(resultBody.Message, ShouldEqual, model.TokenInvalidErr.Message)
+		So(resp.Code, ShouldEqual, constant.TokenInvalidErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.TokenInvalidErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.TokenInvalidErr.Message)
 	})
 
 	Convey("取得貼文成功", t, func() {
@@ -324,7 +325,7 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			mockThreadApp.EXPECT().GetPost(gomock.Any(), &pageParams, getPostRequest).Return(getPostContent, &model.DbConnectErr),
+			mockThreadApp.EXPECT().GetPost(gomock.Any(), &pageParams, getPostRequest).Return(getPostContent, &constant.DbConnectErr),
 		)
 
 		req := httptest.NewRequest(http.MethodGet, testUrl, nil)
@@ -335,8 +336,8 @@ func TestThreadsHandler_GetPost(t *testing.T) {
 		respBody, _ := io.ReadAll(resp.Body)
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
-		So(resp.Code, ShouldEqual, model.DbConnectErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.DbConnectErr.Code)
-		So(resultBody.Message, ShouldEqual, model.DbConnectErr.Message)
+		So(resp.Code, ShouldEqual, constant.DbConnectErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.DbConnectErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.DbConnectErr.Message)
 	})
 }

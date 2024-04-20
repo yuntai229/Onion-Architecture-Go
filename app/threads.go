@@ -1,6 +1,7 @@
 package app
 
 import (
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/ports"
@@ -17,7 +18,7 @@ func NewThreadApp(threadRepo ports.ThreadRepo, logger *zap.Logger) ports.ThreadA
 	return &ThreadApp{threadRepo, logger}
 }
 
-func (app *ThreadApp) CreatePost(requestId string, requestBody dto.PostRequest, userId uint) *model.ErrorMessage {
+func (app *ThreadApp) CreatePost(requestId string, requestBody dto.PostRequest, userId uint) *constant.ErrorMessage {
 	app.Logger.Info("[App][ThreadApp][CreatePost] Entry",
 		zap.String("requestId", requestId),
 		zap.Uint("userId", userId),
@@ -31,7 +32,7 @@ func (app *ThreadApp) CreatePost(requestId string, requestBody dto.PostRequest, 
 	return app.ThreadRepo.Create(requestId, threadData)
 }
 
-func (app *ThreadApp) GetPost(requestId string, pagination *model.Pagination, params dto.GetPostRequest) ([]model.Threads, *model.ErrorMessage) {
+func (app *ThreadApp) GetPost(requestId string, pagination *model.Pagination, params dto.GetPostRequest) ([]model.Threads, *constant.ErrorMessage) {
 	app.Logger.Info("[App][ThreadApp][GetPost] Entry",
 		zap.String("requestId", requestId),
 		zap.Any("pagination", pagination),

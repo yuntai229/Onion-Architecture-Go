@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	mock_ports "onion-architecrure-go/mocks"
@@ -44,9 +45,9 @@ func TestUsersHandler_Signup(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.MissingFieldErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.MissingFieldErr.Code)
-		So(resultBody.Message, ShouldEqual, model.MissingFieldErr.Message)
+		So(resp.Code, ShouldEqual, constant.MissingFieldErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.MissingFieldErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.MissingFieldErr.Message)
 	})
 
 	Convey("註冊", t, func() {
@@ -76,7 +77,7 @@ func TestUsersHandler_Signup(t *testing.T) {
 
 		Convey("失敗 - 帳號已存在", func() {
 			gomock.InOrder(
-				mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&model.UserExistErr),
+				mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&constant.UserExistErr),
 			)
 			req := httptest.NewRequest(http.MethodPost, testUrl, bytes.NewBuffer(jsons))
 			resp := httptest.NewRecorder()
@@ -86,9 +87,9 @@ func TestUsersHandler_Signup(t *testing.T) {
 			var resultBody model.ResFail
 			_ = json.Unmarshal(respBody, &resultBody)
 
-			So(resp.Code, ShouldEqual, model.UserExistErr.HttpCode)
-			So(resultBody.Code, ShouldEqual, model.UserExistErr.Code)
-			So(resultBody.Message, ShouldEqual, model.UserExistErr.Message)
+			So(resp.Code, ShouldEqual, constant.UserExistErr.HttpCode)
+			So(resultBody.Code, ShouldEqual, constant.UserExistErr.Code)
+			So(resultBody.Message, ShouldEqual, constant.UserExistErr.Message)
 		})
 	})
 
@@ -99,7 +100,7 @@ func TestUsersHandler_Signup(t *testing.T) {
 			Password: "ooo",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&model.DbConnectErr),
+			mockUserApp.EXPECT().Signup(gomock.Any(), signupRequest).Return(&constant.DbConnectErr),
 		)
 
 		jsons, _ := json.Marshal(signupRequest)
@@ -111,9 +112,9 @@ func TestUsersHandler_Signup(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.DbConnectErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.DbConnectErr.Code)
-		So(resultBody.Message, ShouldEqual, model.DbConnectErr.Message)
+		So(resp.Code, ShouldEqual, constant.DbConnectErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.DbConnectErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.DbConnectErr.Message)
 	})
 }
 
@@ -144,9 +145,9 @@ func TestUsersHandler_Login(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.MissingFieldErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.MissingFieldErr.Code)
-		So(resultBody.Message, ShouldEqual, model.MissingFieldErr.Message)
+		So(resp.Code, ShouldEqual, constant.MissingFieldErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.MissingFieldErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.MissingFieldErr.Message)
 	})
 
 	Convey("使用者不存在", t, func() {
@@ -155,7 +156,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			Password: "test",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &model.UserNotFoundErr),
+			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &constant.UserNotFoundErr),
 		)
 
 		jsons, _ := json.Marshal(loginRequest)
@@ -167,9 +168,9 @@ func TestUsersHandler_Login(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.UserNotFoundErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.UserNotFoundErr.Code)
-		So(resultBody.Message, ShouldEqual, model.UserNotFoundErr.Message)
+		So(resp.Code, ShouldEqual, constant.UserNotFoundErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.UserNotFoundErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.UserNotFoundErr.Message)
 	})
 
 	Convey("登入密碼", t, func() {
@@ -202,7 +203,7 @@ func TestUsersHandler_Login(t *testing.T) {
 
 		Convey("密碼錯誤", func() {
 			gomock.InOrder(
-				mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &model.PasswordIncorrectErr),
+				mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &constant.PasswordIncorrectErr),
 			)
 
 			jsons, _ := json.Marshal(loginRequest)
@@ -214,9 +215,9 @@ func TestUsersHandler_Login(t *testing.T) {
 			var resultBody model.ResFail
 			_ = json.Unmarshal(respBody, &resultBody)
 
-			So(resp.Code, ShouldEqual, model.PasswordIncorrectErr.HttpCode)
-			So(resultBody.Code, ShouldEqual, model.PasswordIncorrectErr.Code)
-			So(resultBody.Message, ShouldEqual, model.PasswordIncorrectErr.Message)
+			So(resp.Code, ShouldEqual, constant.PasswordIncorrectErr.HttpCode)
+			So(resultBody.Code, ShouldEqual, constant.PasswordIncorrectErr.Code)
+			So(resultBody.Message, ShouldEqual, constant.PasswordIncorrectErr.Message)
 		})
 	})
 
@@ -226,7 +227,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			Password: "test",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &model.TokenGenFail),
+			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &constant.TokenGenFail),
 		)
 
 		jsons, _ := json.Marshal(loginRequest)
@@ -238,9 +239,9 @@ func TestUsersHandler_Login(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.TokenGenFail.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.TokenGenFail.Code)
-		So(resultBody.Message, ShouldEqual, model.TokenGenFail.Message)
+		So(resp.Code, ShouldEqual, constant.TokenGenFail.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.TokenGenFail.Code)
+		So(resultBody.Message, ShouldEqual, constant.TokenGenFail.Message)
 	})
 
 	Convey("Db Connect Error", t, func() {
@@ -249,7 +250,7 @@ func TestUsersHandler_Login(t *testing.T) {
 			Password: "test",
 		}
 		gomock.InOrder(
-			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &model.DbConnectErr),
+			mockUserApp.EXPECT().Login(gomock.Any(), loginRequest).Return("", &constant.DbConnectErr),
 		)
 
 		jsons, _ := json.Marshal(loginRequest)
@@ -261,8 +262,8 @@ func TestUsersHandler_Login(t *testing.T) {
 		var resultBody model.ResFail
 		_ = json.Unmarshal(respBody, &resultBody)
 
-		So(resp.Code, ShouldEqual, model.DbConnectErr.HttpCode)
-		So(resultBody.Code, ShouldEqual, model.DbConnectErr.Code)
-		So(resultBody.Message, ShouldEqual, model.DbConnectErr.Message)
+		So(resp.Code, ShouldEqual, constant.DbConnectErr.HttpCode)
+		So(resultBody.Code, ShouldEqual, constant.DbConnectErr.Code)
+		So(resultBody.Message, ShouldEqual, constant.DbConnectErr.Message)
 	})
 }

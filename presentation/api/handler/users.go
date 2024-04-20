@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"onion-architecrure-go/domain/constant"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/dto"
 	"onion-architecrure-go/ports"
@@ -25,7 +26,7 @@ func (handler *UserHandler) Signup(ctx *gin.Context) {
 	var requestBody dto.SignupRequest
 
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
-		newErr := model.MissingFieldErr
+		newErr := constant.MissingFieldErr
 		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Signup] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
@@ -61,7 +62,7 @@ func (handler *UserHandler) Login(ctx *gin.Context) {
 	requestId := fmt.Sprintf("%v", ctx.Value("requestId"))
 	var requestBody dto.LoginRequest
 	if err := ctx.ShouldBindJSON(&requestBody); err != nil {
-		newErr := model.MissingFieldErr
+		newErr := constant.MissingFieldErr
 		res := model.NewResModel().ResWithFail(newErr)
 		handler.Logger.Info("[ApiHandler][UserHandler][Login] Request end - ShouldBindJSON Error",
 			zap.String("requestId", requestId),
