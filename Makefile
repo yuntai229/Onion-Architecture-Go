@@ -19,6 +19,10 @@ up:
 down:
 	docker compose down
 
+.PHONY: restart
+restart:
+	docker compose restart
+
 # Clean all the resource created from this app
 .PHONY: clean
 clean:
