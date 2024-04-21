@@ -27,6 +27,7 @@ I'm glad that you're reading! If you found this project is useful or mindblow fo
 ├── cmd              --> The app init step
 ├── domain
 │   ├── model
+│   ├── constant     --> The constant variable
 │   └── service      --> The domain logic
 ├── dto
 ├── extend           --> App Utils/Tools
@@ -61,6 +62,16 @@ All there are executed in docker environment.
     ```bash
     make up
     ```
+
+    Then you can check health by
+
+    ```bash
+    curl "http://127.0.0.1:8080/ping"
+    ```
+
+    will receive: {"message":"pong"}
+
+    If you first start the app or has cleaned the resource before, you need to run Init Database command.
 
 * Terminate the service
 
@@ -171,6 +182,14 @@ This feature supported by [atlas](https://atlasgo.io) package, auto generated mo
     make migrate-reload
     ```
 
-## Notice
+## Debug
 
-If you wnat to change the db config (database, port, password), you need to edit **/env/local-docker/rdb.yaml**, **docker-compose.yaml** file and **Makefile**. The other config changes, your check point will be in **cmd/config.go** file. About the online environment config including uat, product ...etc, we prefer you to store it in credentials services.
+We choose [zap](https://github.com/uber-go/zap) package which maintained by **Uber**, to implement in our log system. We also add **request-id** for each request, showed in log in every function entry point to identify the same request, and finally return in response header for tracing log more precisely.
+
+## Env Config
+
+1. If you wnat to change the db config (database, port, password), you need to edit **/env/local-docker/rdb.yaml**, **docker-compose.yaml** file and **Makefile**. The other config changes, your check point will be in **cmd/config.go** file.
+
+2. We decide which env be executed by flag **APP_ENV**.
+
+3. About the online environment config including uat, product ...etc, we prefer you to store it in credentials services.
