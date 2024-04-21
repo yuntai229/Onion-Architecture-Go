@@ -57,10 +57,21 @@ All there are executed in docker environment.
 
 * Start
 
-    Support hot reload by [Air](https://github.com/cosmtrek/air) package.
-
     ```bash
     make up
+    ```
+
+    Support hot reload by [Air](https://github.com/cosmtrek/air) package.
+
+    This will start the service and **MySQL**, the config will be:
+
+    ```json
+    {
+        Host: localhost
+        Port: 3307
+        User: root
+        password: pass
+    }
     ```
 
     Then you can check health by
@@ -77,6 +88,12 @@ All there are executed in docker environment.
 
     ```bash
     make down
+    ```
+
+* restart the service
+
+    ```bash
+    make restart
     ```
 
 * Clean all the resource
