@@ -201,7 +201,7 @@ This feature supported by [atlas](https://atlasgo.io) package, auto generated mo
 
 ## Debug
 
-We choose [zap](https://github.com/uber-go/zap) package which maintained by **Uber**, to implement in our log system. We also add **request-id** for each request, showed in log in every function entry point to identify the same request, and finally return in response header for tracing log more precisely.
+We choose [zap](https://github.com/uber-go/zap) package which maintained by **Uber**, to implement in our log system. We also add **request-id** for each request, showed in log in every function entry point to identify which are came from same request, and finally return in response header for tracing log more precisely.
 
 ## Env Config
 
