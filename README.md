@@ -72,7 +72,7 @@ All there are executed in docker environment.
         User: "root"
         password: "pass"
     }
-    ```
+    
 
     Then you can check health by
 
