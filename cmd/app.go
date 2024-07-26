@@ -19,22 +19,15 @@ func InitApp(config *model.Config, db *gorm.DB, logger *zap.Logger) (handlers ap
 	userApp := app.NewUserApp(config, userRepo, logger)
 	threadApp := app.NewThreadApp(threadRepo, logger)
 
-	homeHandler := handler.NewHomeHandler(logger)
-	userHandler := handler.NewUserHandler(userApp, logger)
-	threadHandler := handler.NewThreadHandler(threadApp, logger)
-
-	jwtMiddelware := middleware.NewJwtMiddleware(config, logger)
-	logTraceMiddleware := middleware.NewLogTraceMiddleware(logger)
-
 	handlers = api.Handlers{
-		HomeHandler:   homeHandler,
-		UserHandler:   userHandler,
-		ThreadHandler: threadHandler,
+		HomeHandler:   handler.NewHomeHandler(logger),
+		UserHandler:   handler.NewUserHandler(userApp, logger),
+		ThreadHandler: handler.NewThreadHandler(threadApp, logger),
 	}
 
 	middlewares = api.Middlewares{
-		JwtMiddelware:      jwtMiddelware,
-		LogTraceMiddleware: logTraceMiddleware,
+		JwtMiddelware:      middleware.NewJwtMiddleware(config, logger),
+		LogTraceMiddleware: middleware.NewLogTraceMiddleware(logger),
 	}
 
 	return handlers, middlewares
