@@ -1,48 +1,22 @@
 package cmd
 
 import (
-	"onion-architecrure-go/presentation/api/handler"
-	"onion-architecrure-go/presentation/api/middleware"
+	"onion-architecrure-go/presentation/api"
 
 	"github.com/gin-gonic/gin"
 )
 
-func InitRouter(handlers []any, middlewares []any) *gin.Engine {
+func InitRouter(handlers api.Handlers, middlewares api.Middlewares) *gin.Engine {
 	router := gin.Default()
 
-	var homeHandler *handler.HomeHandler
-	var userHandler *handler.UserHandler
-	var threadHandler *handler.ThreadHandler
-	for _, item := range handlers {
-		switch handler := item.(type) {
-		case *handler.HomeHandler:
-			homeHandler = handler
-		case *handler.UserHandler:
-			userHandler = handler
-		case *handler.ThreadHandler:
-			threadHandler = handler
-		}
-	}
+	router.Use(middlewares.LogTraceMiddleware.InjectRequestId())
 
-	var jwtMiddelware *middleware.JwtAuthMiddleware
-	var logTraceMiddleware *middleware.LogTraceMiddleware
-	for _, item := range middlewares {
-		switch middleware := item.(type) {
-		case *middleware.JwtAuthMiddleware:
-			jwtMiddelware = middleware
-		case *middleware.LogTraceMiddleware:
-			logTraceMiddleware = middleware
-		}
-	}
+	router.GET("/ping", handlers.HomeHandler.Ping)
+	router.POST("/users/signup", handlers.UserHandler.Signup)
+	router.POST("/users/login", handlers.UserHandler.Login)
 
-	router.Use(logTraceMiddleware.InjectRequestId())
-
-	router.GET("/ping", homeHandler.Ping)
-	router.POST("/users/signup", userHandler.Signup)
-	router.POST("/users/login", userHandler.Login)
-
-	router.POST("/threads/post", jwtMiddelware.Auth(), threadHandler.CreatePost)
-	router.GET("/threads/post", jwtMiddelware.Auth(), threadHandler.GetPost)
+	router.POST("/threads/post", middlewares.JwtMiddelware.Auth(), handlers.ThreadHandler.CreatePost)
+	router.GET("/threads/post", middlewares.JwtMiddelware.Auth(), handlers.ThreadHandler.GetPost)
 
 	return router
 }

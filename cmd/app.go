@@ -4,6 +4,7 @@ import (
 	"onion-architecrure-go/app"
 	"onion-architecrure-go/domain/model"
 	"onion-architecrure-go/infrastructure/rdb"
+	"onion-architecrure-go/presentation/api"
 	"onion-architecrure-go/presentation/api/handler"
 	"onion-architecrure-go/presentation/api/middleware"
 
@@ -11,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitApp(config *model.Config, db *gorm.DB, logger *zap.Logger) (handlers []any, middlewares []any) {
+func InitApp(config *model.Config, db *gorm.DB, logger *zap.Logger) (handlers api.Handlers, middlewares api.Middlewares) {
 	userRepo := rdb.NewUserRepo(db, logger)
 	threadRepo := rdb.NewThreadRepo(db, logger)
 
@@ -25,8 +26,16 @@ func InitApp(config *model.Config, db *gorm.DB, logger *zap.Logger) (handlers []
 	jwtMiddelware := middleware.NewJwtMiddleware(config, logger)
 	logTraceMiddleware := middleware.NewLogTraceMiddleware(logger)
 
-	handlers = []any{homeHandler, userHandler, threadHandler}
-	middlewares = []any{jwtMiddelware, logTraceMiddleware}
+	handlers = api.Handlers{
+		HomeHandler:   homeHandler,
+		UserHandler:   userHandler,
+		ThreadHandler: threadHandler,
+	}
+
+	middlewares = api.Middlewares{
+		JwtMiddelware:      jwtMiddelware,
+		LogTraceMiddleware: logTraceMiddleware,
+	}
 
 	return handlers, middlewares
 }
