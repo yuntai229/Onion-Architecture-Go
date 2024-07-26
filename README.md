@@ -67,12 +67,12 @@ All there are executed in docker environment.
 
     ```json
     {
-        Host: "localhost"
-        Port: "3307"
-        User: "root"
-        password: "pass"
+        Host: "localhost",
+        Port: "3307",
+        User: "root",
+        password: "pass",
     }
-    
+    ```
 
     Then you can check health by
 
